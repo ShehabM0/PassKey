@@ -1,11 +1,23 @@
 import 'dotenv/config'
-import express from 'express';
+import { ajMiddleware } from './middleware/arcjet.ts'
+import { logger } from './config/logger.ts'
+import cookieParser from 'cookie-parser'
+import express from 'express'
+import helmet from 'helmet'
+import cors from 'cors'
 
-const app = express();
 const port = process.env.PORT;
+const app = express();
+
+app.use(cookieParser())
+app.use(express.json())
+app.use(ajMiddleware)
+app.use(helmet())
+app.use(cors())
 
 app.get('/', (req, res) => {
-  res.send('Expressing node!');
+  logger.info('winston logging!')
+  res.status(200).send('PassKey+ is healthy!');
 });
 
 app.listen(port, () => {
