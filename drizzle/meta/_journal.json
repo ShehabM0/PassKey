@@ -8,6 +8,13 @@
       "when": 1764920677261,
       "tag": "0000_marvelous_typhoid_mary",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1765004573420,
+      "tag": "0001_regular_scarlet_spider",
+      "breakpoints": true
     }
   ]
 }

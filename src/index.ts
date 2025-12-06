@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { ajMiddleware } from './middleware/arcjet.ts'
 import { logger } from './config/logger.ts'
+import authRoutes from './routes/auth.ts'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import helmet from 'helmet'
@@ -17,9 +18,11 @@ app.use(cors())
 
 app.get('/', (req, res) => {
   logger.info('winston logging!')
-  res.status(200).send('PassKey+ is healthy!');
+  res.status(200).send('PassKey+ is healthy!')
 });
 
+app.use('/api/auth', authRoutes)
+
 app.listen(port, () => {
-  return console.log(`Express is listening at http://localhost:${port}`);
-});
+  return console.log(`Express is listening at http://localhost:${port}`)
+})

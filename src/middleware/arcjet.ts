@@ -1,8 +1,8 @@
-import type { Request, Response, NextFunction } from 'express';
-import { logger } from "../config/logger.ts"
-import { aj } from "../config/arcjet.ts"
+import type { Request, Response, NextFunction } from 'express'
+import { aj, authAj } from '../config/arcjet.ts'
+import { logger } from '../config/logger.ts'
 
-export const ajMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+const ajMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const decision = await aj.protect(req, { requested: 1 })
 
@@ -27,3 +27,14 @@ export const ajMiddleware = async (req: Request, res: Response, next: NextFuncti
     next()
   }
 };
+
+const guestMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const decision = await authAj.protect(req, { requested: 1 });
+
+  if (decision.isDenied())
+    return res.status(429).json({ message: "Too many login attempts. Please try again later." });
+
+  next()
+}
+
+export { ajMiddleware, guestMiddleware }

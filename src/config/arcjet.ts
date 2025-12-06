@@ -2,7 +2,7 @@ import arcjet, { shield, detectBot, tokenBucket } from "@arcjet/node";
 
 const dev = process.env.ARCJET_ENV === 'development';
 
-export const aj = arcjet({
+const aj = arcjet({
   key: process.env.ARCJET_KEY!,
   rules: [
     // Shield protects your app from common attacks e.g. SQL injection
@@ -23,3 +23,18 @@ export const aj = arcjet({
     }),
   ],
 });
+
+const authAj = arcjet({
+  key: process.env.ARCJET_KEY!,
+  rules: [
+    tokenBucket({
+      mode: "LIVE",
+      refillRate: 5,
+      interval: 60,
+      capacity: 5,
+    }),
+    shield({ mode: "LIVE" }),
+  ],
+});
+
+export { aj, authAj }
