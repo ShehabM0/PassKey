@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt'
 
-const hashedPass = async(pass: string) => {
-  return await bcrypt.hash(pass, 10)
+const hashStr = async(str: string) => {
+  return await bcrypt.hash(str, 10)
 }
 
-const comparePass = async(pass: string, userPass: string) => {
-  return await bcrypt.compare(pass, userPass)
+const compareHash = async(str: string, encStr: string) => {
+  return await bcrypt.compare(str, encStr)
 }
 
-export { hashedPass, comparePass }
+export { hashStr, compareHash }

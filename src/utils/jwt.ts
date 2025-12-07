@@ -2,8 +2,8 @@ import type { CookieOptions } from 'express'
 import { logger } from '../config/logger.ts'
 import jwt from 'jsonwebtoken'
 
-const generateAccessToken = {
-  sign: (userId: number | undefined) => {
+const manageAccessToken = {
+  sign: (userId: number) => {
     if(!userId)
       throw new Error('Authentication failed!')
     try {
@@ -23,8 +23,8 @@ const generateAccessToken = {
   }
 }
 
-const generateRefreshToken = {
-  sign: (userId: number | undefined) => {
+const manageRefreshToken = {
+  sign: (userId: number) => {
     if(!userId) throw new Error('Authentication failed!');
     try{
       return jwt.sign({ uid: userId }, process.env.REFRESH_TOKEN!, { expiresIn: "2d" })
@@ -50,4 +50,4 @@ const jwtCookieOptions: CookieOptions = {
   maxAge: 15 * 60 * 1000
 };
 
-export { generateAccessToken, jwtCookieOptions }
+export { manageAccessToken, manageRefreshToken }
