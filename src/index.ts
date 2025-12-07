@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import { ajMiddleware } from './middleware/arcjet.ts'
+import { validateEnv } from './validation/env.ts'
 import { logger } from './config/logger.ts'
 import authRoutes from './routes/auth.ts'
 import cookieParser from 'cookie-parser'
@@ -15,6 +16,7 @@ app.use(express.json())
 app.use(ajMiddleware)
 app.use(helmet())
 app.use(cors())
+validateEnv()
 
 app.get('/', (req, res) => {
   logger.info('winston logging!')

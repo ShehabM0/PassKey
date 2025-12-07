@@ -14,7 +14,7 @@ const signupSchema = z
 
 const signinSchema = z.object({
   email: z.email().max(255).toLowerCase().trim(),
-  password: z.string().min(3).max(32),
+  password: z.string().min(8).max(32),
 })
 
 export { signupSchema, signinSchema }

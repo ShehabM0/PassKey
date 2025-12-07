@@ -5,6 +5,7 @@ import { errorFormat } from '../utils/error-format.ts'
 import type { Request, Response } from 'express'
 import type { JwtPayload } from 'jsonwebtoken'
 import { logger } from '../config/logger.ts'
+import crypto from 'crypto';
 
 const signUp = async (req: Request, res: Response) => {
   try {
@@ -44,10 +45,8 @@ const signIn = async(req: Request, res: Response) => {
       })
     }
 
-    const user = await authUser(validation.data)
-
+    const { user, refreshToken } = await authUser(validation.data)
     const accessToken = manageAccessToken.sign(user.id)
-    const refreshToken = manageRefreshToken.sign(user.id)
 
     return res.status(200).json({
       message: "User signed-in successfully.",
@@ -67,7 +66,7 @@ const signIn = async(req: Request, res: Response) => {
   }
 }
 
-const singOut = async(req: Request, res: Response) => {
+const signOut = async(req: Request, res: Response) => {
   const refreshToken = req.body?.refreshToken;
   if(!refreshToken)
     return res.status(404).json({ message: "Refresh token required!"})
@@ -109,4 +108,4 @@ const refresh = async(req: Request, res: Response) => {
     }
 }
 
-export { signUp, signIn, singOut, refresh }
+export { signUp, signIn, signOut, refresh }

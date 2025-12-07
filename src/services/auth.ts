@@ -1,9 +1,11 @@
-import { users, type User, tokens, type RefreshToken } from '../db/schema.ts'
 import { manageAccessToken, manageRefreshToken } from '../utils/jwt.ts'
+import { tokens, type RefreshToken } from '../db/tokens-schema.ts'
+import { users, type User } from '../db/users-schema.ts'
 import { hashStr, compareHash } from '../utils/hash.ts'
+import { hashToken } from '../utils/encrypt.ts'
 import { db } from '../config/db-connection.ts'
 import { logger } from '../config/logger.ts'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 
 const createUser = async(user: User) => {
   try {
@@ -39,10 +41,10 @@ const authUser = async(user: User) => {
     const validPass = await compareHash(user.password, userExist.password)
     if(!validPass) throw new Error("Invalid password!")
      
-    await insertRefreshToken(userExist.id)
+    const refreshToken = await insertRefreshToken(userExist.id)
 
     logger.info("User signed-in successfully.")
-    return userExist
+    return { user: userExist, refreshToken: refreshToken }
   } catch(e) {
     logger.info("Couldn't authenticate user!")
     throw e
@@ -52,7 +54,7 @@ const authUser = async(user: User) => {
 const insertRefreshToken = async(uid: number, rToken?: string) => {
   if(!rToken)
     rToken = manageRefreshToken.sign(uid)
-  const hashedRefreshToken = await hashStr(rToken)
+  const hashedRefreshToken = hashToken(rToken)
 
   const refreshToken: RefreshToken = {
     uid: uid,
@@ -65,23 +67,17 @@ const insertRefreshToken = async(uid: number, rToken?: string) => {
 }
 
 const deleteRefreshToken = async(uid:number, token: string) => {
-  const userTokens = await db
+  const hashedRefreshToken = hashToken(token)
+
+  const [userRefreshToken] = await db
   .select()
   .from(tokens)
-  .where(eq(tokens.uid, uid))
+  .where(eq(tokens.refreshToken, hashedRefreshToken))
 
-  let verfiedTokentokenId = undefined;
-  for(const t of userTokens.values()) {
-    const findToken = await compareHash(token, t.refreshToken)
-    if(findToken) {
-      verfiedTokentokenId = t.id
-      break
-    }
-  }
-  if(!verfiedTokentokenId)
+  if(!userRefreshToken || userRefreshToken.uid !== uid)
     throw new Error('Refresh token revoked or invalid!')
 
-  await db.delete(tokens).where(eq(tokens.id, verfiedTokentokenId))
+  await db.delete(tokens).where(eq(tokens.id, userRefreshToken.id))
 }
 
 const rotateRefreshToken = async(uid: number, token: string) => {
