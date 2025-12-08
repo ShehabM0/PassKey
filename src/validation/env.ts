@@ -9,12 +9,17 @@ const envSchema = z.object({
   ARCJET_ENV: z.enum(['development', 'production']).default('development'),
   ACCESS_TOKEN: z.string(),
   REFRESH_TOKEN: z.string(),
-  ENC_SECRET: z.string()
+  ENC_SECRET: z.string(),
+  EMAIL_HOST: z.string(),
+  EMAIL_PORT: z.string(),
+  EMAIL_USER: z.string(),
+  EMAIL_PASSWORD: z.string(),
 })
 
 const validateEnv = () => {
     const validation = envSchema.safeParse(process.env);
     if(!validation.success) {
+      logger.error("Env variables error")
       logger.error(errorFormat(validation.error.issues))
       process.exit(1);
     }
