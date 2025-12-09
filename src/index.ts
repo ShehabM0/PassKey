@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { ajMiddleware } from './middleware/arcjet.ts'
 import { validateEnv } from './validation/env.ts'
 import { logger } from './config/logger.ts'
+import usersRoutes from './routes/user.ts'
 import authRoutes from './routes/auth.ts'
 import cookieParser from 'cookie-parser'
 import express from 'express'
@@ -19,10 +20,10 @@ app.use(cors())
 validateEnv()
 
 app.get('/', (req, res) => {
-  logger.info('winston logging!')
   res.status(200).send('PassKey+ is healthy!')
 });
 
+app.use('/api/users', usersRoutes)
 app.use('/api/auth', authRoutes)
 
 app.listen(port, () => {

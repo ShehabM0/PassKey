@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body style="margin: 0; padding: 40px 20px; background-color: #FAF9F5; font-family: monospace; font-size: 15px;">
+<body style="margin: 0; padding: 40px 20px; background-color: #FAF9F5; font-family: monospace; font-size: 12px;">
   
   <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 20px;">
     
@@ -18,7 +18,7 @@
       </p>
       
       <div style="margin: 20px 0 25px 0; text-align: center;">
-        <a href="{{redirect_url}}" 
+        <a href="{{http://localhost:3000/api/users/{{uid}}/email/verify/{{token}}}}" 
            style="display: inline-block;
                   background-color: black;
                   color: white;
@@ -29,18 +29,18 @@
                   font-family: monospace;">
           Verify Email
         </a>
-        <p style="margin-top: 20px; font-size: 13px; color: #999999; text-align: center;">
+        <p style="margin-top: 20px; font-size: 10px; color: #999999; text-align: center;">
           If the link does not work, please request another one.
         </p>
       </div>
       
       
       
-      <div style="border-top: 1px solid #E5E5E0; text-align: center; font-size: 13px; color: #666;">
-        <p style="font-size: 12px; color: #999999;">
+      <div style="border-top: 1px solid #E5E5E0; text-align: center; font-size: 8px; color: #666;">
+        <p style="color: #999999;">
           If you didn't request this email, you can safely ignore it.
         </p>
-        <p style="font-size: 12px; color: #999999;">
+        <p style="color: #999999;">
           © 2025 PassKey+. All rights reserved.
         </p>
       </div>
