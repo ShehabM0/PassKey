@@ -24,17 +24,4 @@ const aj = arcjet({
   ],
 });
 
-const authAj = arcjet({
-  key: process.env.ARCJET_KEY!,
-  rules: [
-    tokenBucket({
-      mode: "LIVE",
-      refillRate: 5,
-      interval: 60,
-      capacity: 5,
-    }),
-    shield({ mode: "LIVE" }),
-  ],
-});
-
-export { aj, authAj }
+export { aj }

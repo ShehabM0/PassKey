@@ -26,7 +26,7 @@ const sendVerification = async(req: Request, res: Response) => {
     }
     const email = await sendEmail(emailData)
 
-    res.status(200).json({ message: `An email has been sent to ${user.email}, check you inbox.` })
+    res.status(200).json({ message: `An email has been sent to ${user.email}, check your inbox.` })
   } catch (e) {
     res.status(400).json({ message: "Error sending email!" })
   }
