@@ -1,6 +1,8 @@
+import { manageAccessToken, manageRefreshToken } from '../utils/jwt.ts'
 import type { Request, Response, NextFunction } from 'express'
-import { manageAccessToken } from '../utils/jwt.ts'
+import { rotateRefreshToken } from '../services/auth.ts'
 import { logger } from '../config/logger.ts'
+import { cookies } from '../utils/cookis.ts'
 
 declare global {
   namespace Express {
@@ -21,19 +23,45 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
     if (!token)
       return res.status(401).json({ message: 'Authentication required, No token provided!' })
 
-    const payload = manageAccessToken.verify(token)
-    
-    if (typeof payload === 'string')
-      return res.status(401).json({ message: 'Invalid token!' })
+    try {
+      const payload = manageAccessToken.verify(token)
+      
+      if (typeof payload !== 'string')
+        req.userId = payload.uid
 
-    req.userId = payload.uid
-    
-    next()
-  } catch (e) {
-    if (e instanceof Error && e.message === 'Token Verification failed!') {
-      return res.status(401).json({ message: e.message })
+      next()
+    } catch (e) {
+      if (e instanceof Error && e.message === 'Token Verification failed!') {
+        const refreshToken = req.cookies.refreshToken
+        if (!refreshToken)
+          return res.status(401).json({ message: 'Access token expired. Refresh token required!' })
+
+        try {
+          const payload = manageRefreshToken.verify(refreshToken)
+          
+          if (typeof payload === 'string')
+            return res.status(401).json({ message: 'Invalid refresh token!' })
+
+          const userId = payload.uid
+
+          const { newAccessToken, newRefreshToken } = await rotateRefreshToken(userId, refreshToken)
+          cookies.set(res, 'accessToken', newAccessToken)
+          cookies.set(res, 'refreshToken', newRefreshToken)
+          req.userId = userId
+
+          next()
+        } catch (e) {
+          if (e instanceof Error && e.message === 'Token Verification failed!') {
+            return res.status(401).json({ message: 'Refresh token expired or invalid!' })
+          }
+          logger.error('Refresh token error!', e)
+          return res.status(401).json({ message: 'Invalid refresh token!' })
+        }
+      } else {
+        throw e
+      }
     }
-    
+  } catch (e) {
     logger.error('Authentication error!', e)
     return res.status(500).json({ message: 'Internal server error!' })
   }
