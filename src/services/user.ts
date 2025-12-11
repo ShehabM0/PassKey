@@ -1,21 +1,38 @@
-import { manageAccessToken, manageRefreshToken } from '../utils/jwt.ts'
-import { tokens, type RefreshToken } from '../db/tokens-schema.ts'
 import { users, type User } from '../db/users-schema.ts'
-import { hashStr, compareHash } from '../utils/hash.ts'
-import { hashToken } from '../utils/encrypt.ts'
 import { db } from '../config/db-connection.ts'
-import { logger } from '../config/logger.ts'
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 
 const getUserById = async(uid: number) => {
-  const [user] = await db
-  .select()
-  .from(users)
-  .where(eq(users.id, uid))
+  try {
+    const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, uid))
 
-  if(!user) throw new Error("User not found!")
+    if(!user) throw new Error("User not found!")
 
-  return user
+    return user
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Error fetching user by ID!'
+    throw new Error(message)
+  }
+}
+
+const getUserByEmail = async(email: string) => {
+  try {
+    const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+
+    if(!user) throw new Error("User not found!")
+
+    return user
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Error fetching user by email!'
+    console.log(message)
+    throw new Error(message)
+  }
 }
 
 const updateUser = async(user: User) => {
@@ -26,11 +43,12 @@ const updateUser = async(user: User) => {
     await db.update(users)
     .set(user)
     .where(eq(users.id, uid));
-  } catch (e) {
-    throw new Error("Error updating user!")
-  }
 
-  return user
+    return user
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Error updating user!'
+    throw new Error(message)
+  }
 }
 
-export { getUserById, updateUser }
+export { getUserByEmail, getUserById, updateUser }
