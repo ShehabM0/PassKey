@@ -44,7 +44,7 @@ const authorizeUser = (req: Request, res: Response, next: NextFunction) => {
     const uid = req.userId
     const reqUid = Number(req.params.id)
 
-    if (uid && uid !== reqUid)
+    if (reqUid && uid !== reqUid)
       return res.status(403).json({ message: 'Forbidden. You can only access your own resources!' })
 
     next()

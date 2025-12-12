@@ -1,4 +1,4 @@
-import { vefrifyEmail, sendVerification, resetPassword, verifyResetPassword } from '../controllers/user.ts'
+import { vefrifyEmail, sendVerification, resetPassword, verifyResetPassword, updatePassword, verifyUpdatePassword } from '../controllers/user.ts'
 import { authMiddleware, authorizeUser } from '../middleware/auth.ts'
 import express from 'express'
 
@@ -9,5 +9,8 @@ usersRoutes.get('/:id/email/verify/:token', authMiddleware, authorizeUser, vefri
 
 usersRoutes.post('/password/reset', resetPassword)
 usersRoutes.post('/:id/password/reset/:token', verifyResetPassword)
+
+usersRoutes.patch('/password/update/', authMiddleware, authorizeUser, updatePassword)
+usersRoutes.get('/password/update/:token', authMiddleware, authorizeUser, verifyUpdatePassword)
 
 export default usersRoutes

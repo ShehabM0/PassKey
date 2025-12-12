@@ -4,12 +4,18 @@ import z from 'zod'
 
 const envSchema = z.object({
   PORT: z.string().default('3000'),
+
   DATABASE_URL: z.string().url(),
-  ARCJET_KEY: z.string(),
+  REDIS_URL: z.string().url(),
+
   ARCJET_ENV: z.enum(['development', 'production']).default('development'),
+  ARCJET_KEY: z.string(),
+
   ACCESS_TOKEN: z.string(),
   REFRESH_TOKEN: z.string(),
+
   ENC_SECRET: z.string(),
+
   EMAIL_HOST: z.string(),
   EMAIL_PORT: z.string(),
   EMAIL_USER: z.string(),

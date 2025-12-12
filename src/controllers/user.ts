@@ -1,12 +1,13 @@
 import { getUserByEmail, getUserById, updateUser } from '../services/user.ts'
+import { emailSchema, passwordSchema } from '../validation/user.ts'
+import { compareHash, hashStr } from '../utils/hash.ts'
 import { errorFormat } from '../utils/error-format.ts'
 import { type Request, type Response } from 'express'
 import { manageAccessToken } from '../utils/jwt.ts'
-import { emailSchema, passwordSchema } from '../validation/user.ts'
 import { sendEmail } from '../utils/send-email.ts'
 import { type EmailDAO } from '../config/smtp.ts'
 import { logger } from '../config/logger.ts'
-import { hashStr } from '../utils/hash.ts'
+import { redis } from '../config/redis.ts'
 
 const sendVerification = async(req: Request, res: Response) => {
   const { id } = req.params
@@ -86,7 +87,7 @@ const resetPassword = async(req: Request, res: Response) => {
         token: token
       }
     }
-    const email = await sendEmail(emailData)
+    await sendEmail(emailData)
 
     return res.status(200).json({ message: `An email has been sent to ${user.email}, check your inbox.` })
   } catch(e) {
@@ -114,7 +115,7 @@ const verifyResetPassword = async(req: Request, res: Response) => {
     const user = await getUserById(uid)
     
     const aToken = manageAccessToken.verify(String(token))
-    if(typeof aToken !== "string" && aToken.uid != uid)
+    if(typeof aToken !== "string" && aToken.uid !== uid)
       return res.status(403).json({ message: 'Forbidden. You can only access your own resources!' })
 
     user.password = await hashStr(password)
@@ -134,4 +135,77 @@ const verifyResetPassword = async(req: Request, res: Response) => {
   }
 }
 
-export { sendVerification, vefrifyEmail, resetPassword, verifyResetPassword }
+const updatePassword = async(req: Request, res: Response) => {
+  const { oldPassword, newPassword } = req.body
+  const oldPassValidation = passwordSchema.safeParse({ password: oldPassword })
+  const newPassValidation = passwordSchema.safeParse({ password: newPassword })
+  const uid = req.userId
+
+  if(!uid)
+    return res.status(400).json({ message: "Failed to get user id!" })
+  if(!oldPassValidation.success) {
+    return res.status(400).json({
+      message: "Old Password validation failed!",
+      error: errorFormat(oldPassValidation.error.issues)
+    })
+  }
+  if(!newPassValidation.success) {
+    return res.status(400).json({
+      message: "New Password validation failed!",
+      error: errorFormat(newPassValidation.error.issues)
+    })
+  }
+
+  const user = await getUserById(uid)
+  if(!user.email_confirm)
+    return res.status(403).json({ message: "Please verify your email first!" })
+
+  const confirmPass = await compareHash(oldPassword, user.password)
+  if(!confirmPass)
+    return res.status(401).json({ message: "Current password is incorrect, please try again!" })
+
+  const newHashedPass = await hashStr(newPassword)
+  await redis.setex('password-update:${uid}:${token}', 15 * 60, newHashedPass)
+
+  const token = manageAccessToken.sign(uid)
+  const emailData: EmailDAO = {
+    to: "dummyshehab@gmail.com",
+    subject: "Password update",
+    htmlTempPath: "/src/templates/update-password.html",
+    variables: {
+      uid: uid,
+      token: token
+    }
+  }
+  await sendEmail(emailData)
+
+  return res.status(200).json({ message: `An email has been sent to ${user.email}, check your inbox.` })
+}
+
+const verifyUpdatePassword = async(req: Request, res: Response) => {
+  const token = req.params?.token
+  const uid = req.userId
+
+  if(!uid)
+    return res.status(401).json({ message: "Failed to get user id!" })
+
+  const aToken = manageAccessToken.verify(String(token))
+  if(typeof aToken !== "string" && aToken.uid !== uid)
+    return res.status(403).json({ message: 'Forbidden. You can only access your own resources!' })
+
+  const newHashedPass = await redis.get('password-update:${uid}:${token}')
+  if(!newHashedPass)
+    return res.status(400).json({ message: "Couldn't find redis password!" })
+
+  const user = await getUserById(uid)
+  user.password = newHashedPass
+  await updateUser(user)
+  
+  return res.status(200).json({ message: "Your password has been updated successfully.", data: newHashedPass })
+}
+
+export {
+  sendVerification, vefrifyEmail,
+  resetPassword, verifyResetPassword,
+  updatePassword, verifyUpdatePassword 
+}
