@@ -1,6 +1,11 @@
+import { getUserCredentials } from '../../services/credential.ts'
 import { getUserById } from '../../services/user.ts'
 import type { GraphQLContext } from '../context.ts'
 import { logger } from '../../config/logger.ts'
+
+type UserParent = {
+  id: string
+}
 
 const userResolvers = {
   Query: {
@@ -21,32 +26,33 @@ const userResolvers = {
         logger.error(message)
         throw new Error(message)
       }
-    },
-
-    user: async (_: unknown, args: { id: string }, context: GraphQLContext) => {
-      if (!context.uid) {
+    }
+  },
+  User: {
+    credentials: async (parent: UserParent, args: { page?: Number, limit?: Number }, context: GraphQLContext) => {
+      if (!context.uid)
         throw new Error('Authentication required!')
-      }
-
-      const uid = Number(args.id)
-      if (context.uid !== uid)
-        throw new Error('Forbidden. You can only access your own resources!')
 
       try {
-        const user = await getUserById(uid)
+        const uid = Number(parent.id)
+        const userCredentials = await getUserCredentials(uid)
+        
+        const credentials = userCredentials.data
+        const pagination = userCredentials.pagination
+        const data = credentials.map((credential) => ({
+          ...credential,
+          created_at: credential.created_at.toISOString(), // Date -> string
+          updated_at: credential.updated_at.toISOString(),
+        }))
 
-        return {
-          id: String(user.id),
-          name: user.name!,
-          email: user.email,
-        }
+        return { data, pagination }
       } catch (e) {
-        const message = e instanceof Error ? e.message : 'Error fetching user!'
-        logger.error(message)
+        const message = e instanceof Error ? e.message : 'Error fetching credentials!'
+        logger.error('Error getting user credentials!', e)
         throw new Error(message)
       }
-    },
-  },
+    }
+  }
 }
 
 export { userResolvers }
