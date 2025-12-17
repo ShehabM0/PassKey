@@ -1,11 +1,12 @@
 import 'dotenv/config'
 
-import { expressMiddleware } from '@as-integrations/express5';
+import { expressMiddleware } from '@as-integrations/express5'
 import { resolvers } from './graphql/resolvers/index.ts'
 import { createContext } from './graphql/context.ts'
 import { typeDefs } from './graphql/schema.ts'
 import { ApolloServer } from '@apollo/server'
 
+import { managePlatform } from './services/platform.ts'
 import { ajMiddleware } from './middleware/arcjet.ts'
 import { validateEnv } from './validation/env.ts'
 import { logger } from './config/logger.ts'
@@ -42,13 +43,21 @@ const apolloServer = new ApolloServer({
 })
 await apolloServer.start()
 
+const loadPlatforms = () => {
+  const platforms = new managePlatform()
+  const length = platforms.init()
+  const message = length ? `Cached ${length} platforms.` : 'Cache not initialized!'
+  logger.info(message)
+}
+loadPlatforms()
+
 app.get('/', (req, res) => {
   res.status(200).send('PassKey+ is healthy!')
 });
 
+app.use('/graphql', expressMiddleware(apolloServer, { context: createContext }))
 app.use('/api/users', usersRoutes)
 app.use('/api/auth', authRoutes)
-app.use('/graphql', expressMiddleware(apolloServer, { context: createContext }))
 
 app.listen(port, () => {
   return console.log(`Express is listening at http://localhost:${port}`)

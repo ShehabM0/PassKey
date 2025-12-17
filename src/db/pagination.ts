@@ -15,4 +15,23 @@ type PaginatedResult<T> = {
   }
 }
 
-export type { PaginationParams, PaginatedResult }
+// filter dropdown / infinite scroll.
+type ListPaginationParams = {
+  offset?: number
+  limit?: number
+}
+
+type ListPaginatedResult<T> = {
+  data: T[]
+  pagination: {
+    nextOffset: number
+    limit: number
+    totalItems: number
+    hasNextPage: boolean
+  }
+}
+
+export type {
+  PaginationParams, PaginatedResult,
+  ListPaginationParams, ListPaginatedResult
+}
