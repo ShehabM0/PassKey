@@ -1,5 +1,6 @@
-import type { ListPaginationParams, ListPaginatedResult } from '../db/pagination.ts';
-import * as simpleIcons from 'simple-icons';
+import type { ListPaginationParams, ListPaginatedResult } from '../db/pagination.ts'
+import { logger } from '../config/logger.ts'
+import * as simpleIcons from 'simple-icons'
 
 interface Platform {
   slug: string;
@@ -35,7 +36,7 @@ export class managePlatform {
   }
 
   search(query: string): Platform[] {
-    if (!this.list)
+    if (!this.list.length)
       throw new Error('Platforms not initialized. Call init() first!');
     const q = query?.toLowerCase().trim();
     if (!q || !q.length)
@@ -58,7 +59,7 @@ export class managePlatform {
   }
 
   fetch(params: ListPaginationParams): ListPaginatedResult<Platform>{
-    if (!this.list)
+    if (!this.list.length)
       throw new Error('Platforms not initialized. Call init() first!');
 
     const total = this.list.length
@@ -83,7 +84,10 @@ export class managePlatform {
   }
 
   // slug, name or alias.
-  getPlatform(title: string): Platform | undefined {
+  get(title: string): Platform | undefined {
+    if (!this.map.size)
+      throw new Error('Platforms not initialized. Call init() first!');
+    
     title = title?.toLocaleLowerCase().trim()
     return this.map.get(title)
   }
@@ -108,3 +112,6 @@ function scorePlatform(p: Platform, q: string): number {
 
   return score
 }
+
+const platforms = new managePlatform()
+export { platforms }

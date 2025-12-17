@@ -6,8 +6,8 @@ import { createContext } from './graphql/context.ts'
 import { typeDefs } from './graphql/schema.ts'
 import { ApolloServer } from '@apollo/server'
 
-import { managePlatform } from './services/platform.ts'
 import { ajMiddleware } from './middleware/arcjet.ts'
+import { platforms } from './services/platform.ts'
 import { validateEnv } from './validation/env.ts'
 import { logger } from './config/logger.ts'
 import usersRoutes from './routes/user.ts'
@@ -44,7 +44,6 @@ const apolloServer = new ApolloServer({
 await apolloServer.start()
 
 const loadPlatforms = () => {
-  const platforms = new managePlatform()
   const length = platforms.init()
   const message = length ? `Cached ${length} platforms.` : 'Cache not initialized!'
   logger.info(message)

@@ -41,8 +41,8 @@ const userResolvers = {
         const pagination = userCredentials.pagination
         const data = credentials.map((credential) => ({
           ...credential,
-          created_at: credential.created_at.toISOString(), // Date -> string
-          updated_at: credential.updated_at.toISOString(),
+          created_at: credential.created_at?.toISOString(), // Date -> string
+          updated_at: credential.updated_at?.toISOString(),
         }))
 
         return { data, pagination }

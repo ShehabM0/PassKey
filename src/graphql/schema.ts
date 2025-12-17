@@ -35,4 +35,15 @@ export const typeDefs = gql`
   type Query {
     me: User
   }
+
+  type Result {
+    success: Boolean!
+    message: String
+  }
+
+  type Mutation {
+    createCredential(platformTitle: String!, email: String!, password: String!): Credential!
+    updateCredential(credentialId: Int!, email: String, password: String): Credential!
+    deleteCredential(credentialId: Int!): Result!
+  }
 `

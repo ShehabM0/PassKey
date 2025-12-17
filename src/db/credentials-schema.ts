@@ -15,12 +15,12 @@ export const credentials = pgTable('credentials', {
 }));
 
 export type Credential = {
-  id: number;
+  id?: number;
   uid: number;
   platformIcon: string;
   platformTitle: string;
   email: string;
   password: string;
-  created_at: Date;
-  updated_at: Date
+  created_at?: Date;
+  updated_at?: Date
 }
