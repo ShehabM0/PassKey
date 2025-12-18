@@ -1,15 +1,14 @@
 import type { ListPaginationParams, ListPaginatedResult } from '../db/pagination.ts'
-import { logger } from '../config/logger.ts'
 import * as simpleIcons from 'simple-icons'
 
-interface Platform {
-  slug: string;
-  name: string;
-  path: string;
-  aliases: string[];
+type Platform = {
+  slug: string
+  name: string
+  path: string
+  aliases: string[]
 }
 
-export class managePlatform {
+class managePlatform {
   private list: Platform[] = []
   private map: Map<string, Platform> = new Map()
 
@@ -114,4 +113,4 @@ function scorePlatform(p: Platform, q: string): number {
 }
 
 const platforms = new managePlatform()
-export { platforms }
+export { type Platform, platforms, managePlatform }

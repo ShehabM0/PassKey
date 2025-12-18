@@ -9,11 +9,11 @@ export const typeDefs = gql`
   }
 
   type CredentialConnection {
-    data: [Credential!]!
-    pagination: Pagination!
+    data: [CredentialDAO!]!
+    pagination: PagePagination!
   }
 
-  type Credential {
+  type CredentialDAO {
     id: ID!
     platformIcon: String!
     platformTitle: String!
@@ -23,7 +23,7 @@ export const typeDefs = gql`
     updated_at: String!
   }
 
-  type Pagination {
+  type PagePagination {
     currentPage: Int!
     pageSize: Int!
     totalItems: Int!
@@ -32,18 +32,44 @@ export const typeDefs = gql`
     hasPreviousPage: Boolean!
   }
 
-  type Query {
-    me: User
+  type PlatformConnection {
+    data: [PlatformDAO!]!
+    pagination: ListPagination!
   }
 
-  type Result {
+  type PlatformDAO {
+    slug: String!
+    name: String!
+    path: String!
+    aliases: [String]
+  }
+
+  type ListPagination {
+    nextOffset: Int!
+    limit: Int!
+    totalItems: Int!
+    hasNextPage: Boolean!
+  }
+
+
+  type Response {
     success: Boolean!
     message: String
   }
 
+  type Platform {
+    filter(query: String!): [PlatformDAO!]!
+    fetch(offset: Int, limit: Int): PlatformConnection!
+  }
+
+  type Query {
+    me: User
+    platform: Platform!
+  }
+
   type Mutation {
-    createCredential(platformTitle: String!, email: String!, password: String!): Credential!
-    updateCredential(credentialId: Int!, email: String, password: String): Credential!
-    deleteCredential(credentialId: Int!): Result!
+    createCredential(platformTitle: String!, email: String!, password: String!): CredentialDAO!
+    updateCredential(credentialId: Int!, email: String, password: String): CredentialDAO!
+    deleteCredential(credentialId: Int!): Response!
   }
 `

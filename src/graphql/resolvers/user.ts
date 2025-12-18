@@ -29,13 +29,13 @@ const userResolvers = {
     }
   },
   User: {
-    credentials: async (parent: UserParent, args: { page?: Number, limit?: Number }, context: GraphQLContext) => {
+    credentials: async (parent: UserParent, args: { page?: number, limit?: number }, context: GraphQLContext) => {
       if (!context.uid)
         throw new Error('Authentication required!')
 
       try {
         const uid = Number(parent.id)
-        const userCredentials = await getUserCredentials(uid)
+        const userCredentials = await getUserCredentials(uid, { page: args.page, limit: args.limit })
         
         const credentials = userCredentials.data
         const pagination = userCredentials.pagination
