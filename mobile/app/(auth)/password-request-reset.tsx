@@ -1,8 +1,7 @@
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/components/common/colors';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import React, { useState } from 'react';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   ActivityIndicator,
@@ -15,34 +14,25 @@ import {
   View,
 } from 'react-native';
 
-export default function LoginScreen() {
+export default function RequestPasswordResetScreen() {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setshowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
+  const handlePasswordReset = async () => {
+    if (!email) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 5000); 
-  };
 
-  const toggleShowPassword = () => {
-    setshowPassword(!showPassword);
-  }
-
-  const handleForgotPassPress = () => {
-    router.push('/password-request-reset');
-  };
-
-  const handleRegisterPress = () => {
-    router.push('/register');
+    router.push({
+      pathname: '/email-sent',
+      params: { email: email }
+    });
   };
 
   return (
@@ -56,12 +46,12 @@ export default function LoginScreen() {
 
       <View style={styles.content}>
 
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
+        <Text style={styles.title}>Restore your account</Text>
+        <Text style={styles.subtitle}>Enter the email associated with your account to change your password.</Text>
 
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <MaterialIcons name="email" size={24} color="black" />
+            <MaterialIcons style={styles.icon} name="email" size={24} color="black" />
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -73,43 +63,16 @@ export default function LoginScreen() {
             />
           </View>
 
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="lock" size={24} color="black" />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-              editable={!isLoading}
-            />
-            {password && 
-            <Ionicons
-                name={showPassword? "eye" : "eye-off"}
-                size={24}
-                color="grey"
-                onPress={toggleShowPassword}
-            />}
-          </View>
-
           <TouchableOpacity
             style={[styles.button, isLoading && styles.buttonDisabled]}
-            onPress={handleLogin}
+            onPress={handlePasswordReset}
             disabled={isLoading}
           >
             {isLoading ? (
               <ActivityIndicator color={Colors.white} />
             ) : (
-              <Text style={styles.buttonText}>Sign In</Text>
+              <Text style={styles.buttonText}>Next</Text>
             )}
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.forgotPassword} onPress={handleForgotPassPress}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.forgotPassword} onPress={handleRegisterPress}>
-            <Text style={styles.forgotPasswordText}>Don't have an account? <Text style={styles.signUpText}>Sign up</Text>
-            </Text>
           </TouchableOpacity>
 
         </View>
@@ -143,19 +106,21 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: Colors.gray900
+    color: Colors.gray900,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     color: Colors.gray500,
     marginBottom: 40,
+    textAlign: 'center',
   },
   form: {
     width: '100%',
   },
   input: {
-      flex: 1,
-      height: '100%',
+    flex: 1,
+    height: '100%',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -166,6 +131,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 20,
+  },
+  icon: {
+    marginRight: 3
   },
   button: {
     backgroundColor: Colors.black,
@@ -181,18 +149,6 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 16,
     fontWeight: '600',
-  },
-  forgotPassword: {
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  forgotPasswordText: {
-    color: Colors.gray700,
-    fontSize: 14,
-  },
-  signUpText: {
-    textDecorationLine: 'underline',
-    fontWeight: 'bold'
   },
   plus: {
     color: 'blue',
