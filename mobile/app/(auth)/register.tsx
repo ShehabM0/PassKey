@@ -14,6 +14,7 @@ import {
     Text,
     View,
 } from 'react-native';
+import SuccessMessage from '@/components/SuccessMessage';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -21,8 +22,10 @@ export default function RegisterScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const [showPassword, setshowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
@@ -30,8 +33,13 @@ export default function RegisterScreen() {
       return;
     }
 
+    setSuccess(true);
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 5000); 
+    setTimeout(() => {
+      setSuccess(false);
+      setIsLoading(false);
+      router.replace('/(auth)/login');
+    }, 3000); 
   };
 
   const toggleShowPassword = () => {
@@ -47,6 +55,10 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      {
+        success &&
+        <SuccessMessage message='Your account has been created'/>
+      }
       <View style={styles.header}>
         <Text style={styles.headTitle}>PassKey<Text style={styles.plus}>+</Text></Text>
       </View>

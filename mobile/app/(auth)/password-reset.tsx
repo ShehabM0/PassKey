@@ -1,4 +1,5 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import SuccessMessage from '@/components/SuccessMessage';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React, { useState } from 'react';
@@ -19,8 +20,10 @@ export default function PasswordResetSScreen() {
   const router = useRouter();
 
   const [password, setPassword] = useState('');
+
   const [showPassword, setshowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handlePassPress  = async () => {
     if (!password) {
@@ -28,11 +31,13 @@ export default function PasswordResetSScreen() {
       return;
     }
 
+    setSuccess(true);
     setIsLoading(true);
     setTimeout(() => {
+      setSuccess(false);
       setIsLoading(false)
       router.replace('/(auth)/login');
-    }, 5000); 
+    }, 3000); 
   };
 
   const toggleShowPassword = () => {
@@ -44,6 +49,10 @@ export default function PasswordResetSScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      {
+        success &&
+        <SuccessMessage message='Your passwrod has been changed'/>
+      }
       <View style={styles.header}>
         <Text style={styles.headTitle}>PassKey<Text style={styles.plus}>+</Text></Text>
       </View>
