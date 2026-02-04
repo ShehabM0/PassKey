@@ -1,5 +1,6 @@
-import { Colors } from '@/components/common/colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useCountdown } from '@/context/CountdownContext';
+import { Colors } from '@/components/common/colors';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -17,6 +18,7 @@ import {
 export default function RequestPasswordResetScreen() {
   const router = useRouter();
 
+  const { countdown, finishedCountdown, setCountdown } = useCountdown();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,6 +28,7 @@ export default function RequestPasswordResetScreen() {
       return;
     }
 
+    setCountdown(30);
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 5000); 
 
@@ -64,9 +67,9 @@ export default function RequestPasswordResetScreen() {
           </View>
 
           <TouchableOpacity
-            style={[styles.button, isLoading && styles.buttonDisabled]}
+            style={[styles.button, (isLoading || !finishedCountdown) && styles.buttonDisabled]}
             onPress={handlePasswordReset}
-            disabled={isLoading}
+            disabled={isLoading || !finishedCountdown}
           >
             {isLoading ? (
               <ActivityIndicator color={Colors.white} />
@@ -74,6 +77,7 @@ export default function RequestPasswordResetScreen() {
               <Text style={styles.buttonText}>Next</Text>
             )}
           </TouchableOpacity>
+          { !finishedCountdown && <Text style={styles.note}>Resend email in {countdown}s</Text> }
 
         </View>
       </View>
@@ -114,6 +118,12 @@ const styles = StyleSheet.create({
     color: Colors.gray500,
     marginBottom: 40,
     textAlign: 'center',
+  },
+  note: {
+    textAlign: 'center',
+    marginTop: 5,
+    fontSize: 16,
+    color: Colors.gray500,
   },
   form: {
     width: '100%',

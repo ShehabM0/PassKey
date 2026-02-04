@@ -1,7 +1,8 @@
+import { useCountdown } from '@/context/CountdownContext';
 import { Colors } from '@/components/common/colors';
 import { useLocalSearchParams } from 'expo-router';
+import React, { useState, useEffect } from 'react';
 import Entypo from '@expo/vector-icons/Entypo';
-import React, { useState } from 'react';
 import {
     ActivityIndicator,
     TouchableOpacity,
@@ -12,11 +13,13 @@ import {
 } from 'react-native';
 
 export default function EmailSentScreen() {
+  const { countdown, finishedCountdown, setCountdown } = useCountdown();
   const [isLoading, setIsLoading] = useState(false);
   const { email } = useLocalSearchParams();
-
+    
   const handlePasswordReset = async () => {
     setIsLoading(true);
+    setCountdown(30);
     setTimeout(() => setIsLoading(false), 5000); 
   };
 
@@ -37,9 +40,9 @@ export default function EmailSentScreen() {
         <Text style={styles.subtitle}> Still can't find the email? No Problem.</Text>
 
         <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
+          style={[styles.button, (isLoading || !finishedCountdown) && styles.buttonDisabled]}
           onPress={handlePasswordReset}
-          disabled={isLoading}
+          disabled={isLoading || !finishedCountdown}
         >
           {isLoading ? (
             <ActivityIndicator color={Colors.white} />
@@ -47,6 +50,7 @@ export default function EmailSentScreen() {
             <Text style={styles.buttonText}>Resend Email</Text>
           )}
         </TouchableOpacity>
+        { !finishedCountdown && <Text style={styles.note}>Resend email in {countdown}s</Text> }
 
       </View>
     </View>
@@ -86,6 +90,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
     textAlign: 'center',
+  },
+  note: {
+    marginTop: 5,
+    fontSize: 16,
+    color: Colors.gray500,
   },
   plus: {
     color: 'blue',
