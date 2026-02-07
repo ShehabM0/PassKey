@@ -8,12 +8,17 @@ const PLATFORMS = [
   { id: 'github', name: 'GitHub', icon: 'code' },
   { id: 'google', name: 'Google', icon: 'public' },
   { id: 'notion', name: 'Notion', icon: 'edit' },
-  { id: 'facebook', name: 'Facebook', icon: 'thumb-up' },
-  { id: 'apple', name: 'Apple', icon: 'facebook' },
+  { id: 'facebook', name: 'Facebook', icon: 'facebook' },
+  { id: 'apple', name: 'Apple', icon: 'thumb-up' },
 ];
 
 export default function PlatfromPicker({onClose, onSelect}: any) {
   const [query, setQuery] = useState('');
+
+  const onPick = (item: any) => {
+    onSelect(item);
+    onClose();
+  }
 
   return (
     <>
@@ -50,7 +55,7 @@ export default function PlatfromPicker({onClose, onSelect}: any) {
               data={PLATFORMS}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <PlatformRow item={item} onPress={() => onSelect(item)} />
+                <PlatformRow item={item} onPress={() => onPick(item)} />
               )}
             />
 
