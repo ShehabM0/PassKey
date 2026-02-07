@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Modal, StyleSheet, Text, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React from 'react';
 
@@ -9,25 +9,27 @@ interface SuccessMessageProps {
 export default function SuccessMessage({ message }: SuccessMessageProps) {
   return (
     <>
-    <View style={styles.layout}/>
-    <View style={styles.centered}>
-      <View style={styles.messageCont}>
-        <FontAwesome name="check-circle" size={40} color="green" />
-        {
-          message && 
-          <Text style={styles.message}>
-            {message}
-          </Text>
-        }
-        {
-          !message &&
-          <Text style={styles.message}>
-            Your request has been done
-          </Text>
-        }
-        <Text style={styles.successMessage}>Successfully</Text>
-      </View>
-    </View>
+      <View style={styles.layout}/>
+      <Modal transparent animationType="fade">
+        <View style={styles.centered}>
+          <View style={styles.messageCont}>
+            <FontAwesome name="check-circle" size={40} color="green" />
+            {
+              message && 
+              <Text style={styles.message}>
+                {message}
+              </Text>
+            }
+            {
+              !message &&
+              <Text style={styles.message}>
+                Your request has been done
+              </Text>
+            }
+            <Text style={styles.successMessage}>Successfully</Text>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }

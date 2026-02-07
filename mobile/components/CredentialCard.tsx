@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '@/components/common/colors';
 
 type Credential = {
@@ -12,10 +12,9 @@ type Credential = {
 export default function CredentialCard({ name, email }: Credential) {
   return (
     <View style={styles.card}>
-      {/* Left column (icon) */}
       <View style={styles.leftColumn}>
         <View style={styles.iconContainer}>
-          <MaterialIcons name="facebook" size={35} color={Colors.black} />
+          <MaterialIcons name="facebook" size={40} color={'blue'} />
         </View>
       </View>
 
@@ -30,15 +29,14 @@ export default function CredentialCard({ name, email }: Credential) {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray100,
     borderRadius: 12,
     paddingVertical: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: Colors.gray200,
+    borderColor: Colors.gray200
   },
   iconContainer: {
-    backgroundColor: Colors.gray100,
     padding: 5,
     borderRadius: 10,
   },
@@ -49,6 +47,7 @@ const styles = StyleSheet.create({
   },
   rightColumn: {
     flex: 1,
+    justifyContent: 'center'
   },
   platformName: {
     fontSize: 16,
