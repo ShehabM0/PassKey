@@ -1,5 +1,5 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Touchable, TouchableOpacity } from 'react-native';
 import { Colors } from '@/components/common/colors';
 
 type Credential = {
@@ -7,11 +7,12 @@ type Credential = {
   slug?: string;
   email: string;
   password?: string;
+  onPress: () => void
 };
 
-export default function CredentialCard({ name, email }: Credential) {
+export default function CredentialCard({ name, email, onPress }: Credential) {
   return (
-    <View style={styles.card}>
+    <TouchableOpacity onPress={onPress} style={styles.card}>
       <View style={styles.leftColumn}>
         <View style={styles.iconContainer}>
           <MaterialIcons name="facebook" size={40} color={'blue'} />
@@ -22,7 +23,7 @@ export default function CredentialCard({ name, email }: Credential) {
         <Text style={styles.platformName}>{name}</Text>
         <Text style={styles.slug}>{email}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -57,7 +58,6 @@ const styles = StyleSheet.create({
   slug: {
     fontSize: 13,
     color: Colors.gray500,
-    marginBottom: 10,
   },
   infoBlock: {
     marginTop: 6,

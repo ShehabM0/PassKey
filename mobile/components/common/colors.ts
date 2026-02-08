@@ -10,4 +10,5 @@ export const Colors = {
   gray900: '#171717',    // Headings
 
   error: '#DC2626',      // Errors only
+  red: '#F43F5E',        // Background
 };
