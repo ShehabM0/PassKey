@@ -8,4 +8,8 @@ interface CredentialDAO {
   password: string;
 }
 
-export {PlatformDAO, CredentialDAO}
+interface SuccessMessageProps {
+  message: string;
+}
+
+export { PlatformDAO, CredentialDAO, SuccessMessageProps }

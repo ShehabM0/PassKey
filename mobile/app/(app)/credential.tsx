@@ -1,8 +1,9 @@
-import { PlatformDAO, CredentialDAO } from '@/components/common/types';
 import CreatePageHeader from '@/components/CreatePageHeader';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { CredentialDAO } from '@/components/common/types';
 import SuccessMessage from '@/components/SuccessMessage';
 import CredentialCard from '@/components/CredentialCard';
+import PopupMessage from '@/components/PopUpMessage';
 import { Colors } from '@/components/common/colors';
 import { useLocalSearchParams } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -40,6 +41,7 @@ export default function CreateCredential() {
   const [password, setPassword] = useState(credential.password)
   const [showPassword, setshowPassword] = useState(false);
 
+  const [popup, setPopup] = useState(false);
   const [edit, setEdit] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,6 +65,11 @@ export default function CreateCredential() {
     setEdit(true);
   }
 
+  const onCopy = () => {
+    setPopup(true);
+    setTimeout(() => setPopup(false), 5000); 
+  }
+
   const toggleShowPassword = () => {
     setshowPassword(!showPassword);
   }
@@ -74,6 +81,9 @@ export default function CreateCredential() {
       { success &&
         <SuccessMessage message='Your credential has been edited'/> }
 
+      { popup &&
+        <PopupMessage message='Copied to clipboard.'/> }
+      
       <ScrollView style={styles.content}>
 
         {/* Platform */}
@@ -96,7 +106,7 @@ export default function CreateCredential() {
               keyboardType="email-address"
               editable={edit}
             />
-            <MaterialIcons name="content-copy" size={24} color="black" />
+            <MaterialIcons name="content-copy" size={24} color="black" onPress={onCopy} />
           </View>
 
           {/* password */}
@@ -116,7 +126,7 @@ export default function CreateCredential() {
                 onPress={toggleShowPassword}
                 style={{marginRight: 10}}
             />
-            <MaterialIcons name="content-copy" size={24} color="black" />
+            <MaterialIcons name="content-copy" size={24} color="black" onPress={onCopy} />
           </View>
 
           {/* Buttons */}
