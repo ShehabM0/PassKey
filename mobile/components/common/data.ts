@@ -1,4 +1,4 @@
-export const DATA = [
+const DATA = [
   {
     id: '1',
     name: 'GitHub',
@@ -91,3 +91,9 @@ export const DATA = [
     password: '••••••••',
   },
 ];
+
+const PASSWORD_RESET_STR = "reset your password";
+
+const EMAIL_VERIFY_STR = "verify your email";
+
+export { DATA, PASSWORD_RESET_STR, EMAIL_VERIFY_STR }

@@ -1,3 +1,4 @@
+import { PASSWORD_RESET_STR } from '@/components/common/data';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useCountdown } from '@/context/CountdownContext';
 import { Colors } from '@/components/common/colors';
@@ -34,7 +35,7 @@ export default function RequestPasswordResetScreen() {
 
     router.push({
       pathname: '/email-sent',
-      params: { email: email }
+      params: { email: email, subject: PASSWORD_RESET_STR }
     });
   };
 

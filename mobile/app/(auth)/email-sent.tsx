@@ -15,7 +15,7 @@ import {
 export default function EmailSentScreen() {
   const { countdown, finishedCountdown, setCountdown } = useCountdown();
   const [isLoading, setIsLoading] = useState(false);
-  const { email } = useLocalSearchParams();
+  const { email, subject } = useLocalSearchParams();
     
   const handlePasswordReset = async () => {
     setIsLoading(true);
@@ -35,7 +35,7 @@ export default function EmailSentScreen() {
         <Text style={styles.title}>Check your email</Text>
         <Text style={styles.subtitle}>Your'e almost there! we sent an email to <Text style={{fontWeight: 'bold'}}> {email} </Text></Text>
 
-        <Text style={styles.subtitle}>Just click on the link in that email to reset your password. if you don't see it, you may need to <Text style={{fontWeight: 'bold'}}>check your spam folder.</Text></Text>
+        <Text style={styles.subtitle}>Just click on the link in that email to {subject}. if you don't see it, you may need to <Text style={{fontWeight: 'bold'}}>check your spam folder.</Text></Text>
 
         <Text style={styles.subtitle}> Still can't find the email? No Problem.</Text>
 

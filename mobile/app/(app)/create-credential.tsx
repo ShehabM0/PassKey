@@ -1,4 +1,4 @@
-import CreatePageHeader from '@/components/CreatePageHeader';
+import CreatePageHeader from '@/components/PageHeader';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import SuccessMessage from '@/components/SuccessMessage';
 import PlatfromPicker from '@/components/PlatformPicker';

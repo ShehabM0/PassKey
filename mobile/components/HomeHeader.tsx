@@ -7,15 +7,19 @@ import { useState } from 'react';
 export default function HomeHeader() {
   const [query, setQuery] = useState('');
 
+  const settingsNav = () => {
+    router.push('/settings');
+  }
+
   const createCredentialNav = () => {
-    router.push('/create-credential')
+    router.push('/create-credential');
   }
 
   return (
     <View style={styles.container}>
       
       <View style={styles.topBar}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={settingsNav}>
           <MaterialIcons name="settings" size={24} color={Colors.black} />
         </TouchableOpacity>
 
@@ -58,7 +62,7 @@ export default function HomeHeader() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray100,
     paddingTop: 60,
     paddingHorizontal: 20,
     paddingBottom: 16,

@@ -3,7 +3,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/components/common/colors';
 import { router } from 'expo-router';
 
-export default function CreatePageHeader() {
+export default function PageHeader() {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -21,7 +21,7 @@ export default function CreatePageHeader() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray100,
     paddingTop: 60,
     paddingHorizontal: 20,
     paddingBottom: 16,
