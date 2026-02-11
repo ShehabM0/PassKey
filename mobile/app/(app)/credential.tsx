@@ -1,16 +1,18 @@
-import CreatePageHeader from '@/components/PageHeader';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { CredentialDAO } from '@/components/common/types';
 import SuccessMessage from '@/components/SuccessMessage';
 import CredentialCard from '@/components/CredentialCard';
+import CreatePageHeader from '@/components/PageHeader';
+import PasswordPIN from '@/components/PopUpPassword';
 import PopupMessage from '@/components/PopUpMessage';
 import { Colors } from '@/components/common/colors';
 import { useLocalSearchParams } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import { DATA } from '@/components/common/data';
+import { useEffect, useState } from 'react';
+import * as Clipboard from 'expo-clipboard';
 import { router } from 'expo-router';
-import { useState } from 'react';
 import {
   ActivityIndicator,
   TouchableOpacity,
@@ -22,7 +24,7 @@ import {
   View,
 } from 'react-native';
 
-export default function CreateCredential() {
+export default function CredentialPage() {
   const params = useLocalSearchParams<{ name?: string, email?: string; password?: string; }>();
 
   const credentialPage = (cred: any) => {
@@ -41,10 +43,18 @@ export default function CreateCredential() {
   const [password, setPassword] = useState(credential.password)
   const [showPassword, setshowPassword] = useState(false);
 
-  const [popup, setPopup] = useState(false);
+  const [PIN, setPIN] = useState(false);
+  const [verify, setVerification] = useState(false);
+
   const [edit, setEdit] = useState(false);
+  const [popup, setPopup] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if(verify)
+      showPIN(false);
+  }, [verify]);
 
   const onSaveEdit = async () => {
     if (!email || !password) {
@@ -65,24 +75,50 @@ export default function CreateCredential() {
     setEdit(true);
   }
 
-  const onCopy = () => {
+  const onCopy = async (text: string) => {
+    await Clipboard.setStringAsync(text);
     setPopup(true);
     setTimeout(() => setPopup(false), 5000); 
   }
 
+  const onCopyEmail = () => {
+    onCopy(email);
+  }
+
+  const onCopyPassword = () => {
+    if(verify)
+      onCopy(password);
+    else
+      showPIN(true);
+  }
+
+  const showPIN = (flag: boolean) => {
+    setPIN(flag);
+  }
+
   const toggleShowPassword = () => {
-    setshowPassword(!showPassword);
+    if(showPassword)
+      setshowPassword(false);
+    else
+      if(verify)
+        setshowPassword(true);
+      else
+        showPIN(true);
   }
 
   return (
     <View style={styles.container} >
-      <CreatePageHeader/>
+      <CreatePageHeader color={Colors.white}/>
 
       { success &&
         <SuccessMessage message='Your credential has been edited'/> }
 
       { popup &&
         <PopupMessage message='Copied to clipboard.'/> }
+
+      { PIN &&
+        <PasswordPIN onClose={showPIN} setVerification={setVerification}/>
+      }
       
       <ScrollView style={styles.content}>
 
@@ -106,7 +142,7 @@ export default function CreateCredential() {
               keyboardType="email-address"
               editable={edit}
             />
-            <MaterialIcons name="content-copy" size={24} color="black" onPress={onCopy} />
+            <MaterialIcons name="content-copy" size={24} color="black" onPress={onCopyEmail} />
           </View>
 
           {/* password */}
@@ -126,7 +162,7 @@ export default function CreateCredential() {
                 onPress={toggleShowPassword}
                 style={{marginRight: 10}}
             />
-            <MaterialIcons name="content-copy" size={24} color="black" onPress={onCopy} />
+            <MaterialIcons name="content-copy" size={24} color="black" onPress={onCopyPassword} />
           </View>
 
           {/* Buttons */}
