@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 
 export default function PageHeader({color}: any) {
   return (
-    <View style={[styles.container, {backgroundColor: color}]}>
+    <View style={[styles.container, color && {backgroundColor: color}]}>
       <View style={styles.topBar}>
           <TouchableOpacity onPress={()=> { router.back() }}>
             <MaterialIcons name="arrow-back" size={24} color={Colors.black} />

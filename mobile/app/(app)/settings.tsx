@@ -13,6 +13,10 @@ export default function SettingsScreen() {
 
   const { finishedCountdown, setCountdown } = useCountdown();
 
+  const updatePass = () => {
+    router.push('/(auth)/password-update');
+  }
+
   const sendEmail = () => {
     if(finishedCountdown)
       setCountdown(30);
@@ -23,6 +27,7 @@ export default function SettingsScreen() {
   }
 
   const logout = () => {
+    router.push('/(auth)/login');
   }
 
   return (
@@ -44,7 +49,7 @@ export default function SettingsScreen() {
         <Text style={styles.bodyHeader}>Profile</Text>
 
         <View style={styles.body}>
-          <SettingRow label="Update password" />
+          <SettingRow label="Update password" onPress={() => updatePass()} />
           <SettingRow label="Verify email" onPress={() => sendEmail()}/>
           <SettingRow label="Logout" red onPress={() => logout()}/>
         </View>

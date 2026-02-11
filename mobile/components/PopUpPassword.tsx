@@ -1,5 +1,4 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import * as Clipboard from 'expo-clipboard';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
