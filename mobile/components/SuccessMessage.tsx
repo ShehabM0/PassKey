@@ -1,6 +1,6 @@
 import { Modal, StyleSheet, Text, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { SuccessMessageProps } from './common/types';
+import { SuccessMessageProps } from '../types';
 import React from 'react';
 
 export default function SuccessMessage({ message }: SuccessMessageProps) {

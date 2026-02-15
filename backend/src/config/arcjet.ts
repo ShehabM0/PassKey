@@ -10,7 +10,8 @@ const aj = arcjet({
     // Create a bot detection rule
     detectBot({
       mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-      allow: dev? ["POSTMAN"] : [], // Block all bots except the following
+      allow: dev ? ["POSTMAN", "CATEGORY:PROGRAMMATIC"] : [], // PROGRAMMATIC = libs like Axios/fetch
+
     }),
     tokenBucket({
       // Tracked by IP address by default, but this can be customized

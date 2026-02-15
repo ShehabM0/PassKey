@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { SuccessMessageProps } from './common/types';
+import { SuccessMessageProps } from '../types';
 import { Colors } from './common/colors';
 
 

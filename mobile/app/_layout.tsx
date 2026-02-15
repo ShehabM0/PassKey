@@ -1,4 +1,5 @@
 import { CountdownProvider } from '../context/CountdownContext';
+import { AuthProvider } from '@/context/AuthContext';
 import { Stack } from 'expo-router';
 
 function RootLayoutNav() {
@@ -14,7 +15,9 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <CountdownProvider>
-      <RootLayoutNav />
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
     </CountdownProvider>
   );
 }

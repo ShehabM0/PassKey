@@ -5,7 +5,6 @@ import { errorFormat } from '../utils/error-format.ts'
 import type { Request, Response } from 'express'
 import type { JwtPayload } from 'jsonwebtoken'
 import { logger } from '../config/logger.ts'
-import { cookies } from '../utils/cookis.ts'
 
 const signUp = async (req: Request, res: Response) => {
   try {
@@ -47,12 +46,12 @@ const signIn = async(req: Request, res: Response) => {
 
     const { user, refreshToken } = await authUser(validation.data)
     const accessToken = manageAccessToken.sign(user.id)
-    cookies.set(res, 'accessToken', accessToken)
-    cookies.set(res, 'refreshToken', refreshToken)
 
     return res.status(200).json({
       message: "User signed-in successfully.",
       user: { id:user.id, email: user.email },
+      accessToken,
+      refreshToken
     })
   } catch (e) {
     if (
@@ -68,7 +67,7 @@ const signIn = async(req: Request, res: Response) => {
 }
 
 const signOut = async(req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req.body?.refreshToken;
   if(!refreshToken)
     return res.status(404).json({ message: "Refresh token required!"})
 
@@ -97,10 +96,12 @@ const refresh = async(req: Request, res: Response) => {
         return res.status(400).json({ message: "Invalid refresh token!"})
 
       const { newAccessToken, newRefreshToken } = await rotateRefreshToken(payload.uid, refreshToken)
-      cookies.set(res, 'accessToken', newAccessToken)
-      cookies.set(res, 'refreshToken', newRefreshToken)
 
-      return res.status(200).json({ message: "Tokens refreshed successfully." })
+      return res.status(200).json({
+        message: "Tokens refreshed successfully.",
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      })
     } catch (e) {
       const err = e instanceof Error? e.message : "Invalid refresh token!";
       return res.status(400).json({ message: err })

@@ -1,4 +1,3 @@
-import type { CookieOptions } from 'express'
 import { logger } from '../config/logger.ts'
 import jwt from 'jsonwebtoken'
 

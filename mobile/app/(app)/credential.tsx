@@ -1,5 +1,5 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { CredentialDAO } from '@/components/common/types';
+import { CredentialDAO } from '@/types';
 import SuccessMessage from '@/components/SuccessMessage';
 import CredentialCard from '@/components/CredentialCard';
 import CreatePageHeader from '@/components/PageHeader';
