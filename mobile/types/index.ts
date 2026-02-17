@@ -15,6 +15,11 @@ interface SigninCredentials {
   password: string;
 }
 
+interface RefreshResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
 interface AuthResponse {
   accessToken: string;
   refreshToken: string;
@@ -23,6 +28,7 @@ interface AuthResponse {
 
 interface AuthContextType {
   user: User | null;
+  isAuthenticating: boolean;
   isAuthenticated: boolean;
   signup: (credentials: SignupCredentials) => Promise<void>;
   signin: (credentials: SigninCredentials) => Promise<void>;
@@ -45,6 +51,6 @@ interface SuccessMessageProps {
 }
 
 export { 
-  User, SignupCredentials, SigninCredentials, AuthResponse, AuthContextType,
+  User, SignupCredentials, SigninCredentials, AuthResponse, RefreshResponse, AuthContextType,
   PlatformDAO, CredentialDAO, SuccessMessageProps
 }

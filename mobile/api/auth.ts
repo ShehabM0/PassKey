@@ -1,4 +1,5 @@
-import { SignupCredentials, SigninCredentials, AuthResponse } from '../types'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SignupCredentials, SigninCredentials, AuthResponse, RefreshResponse } from '../types'
 import apiClient from './client';
 
 export const authApi = {
@@ -13,6 +14,14 @@ export const authApi = {
   },
 
   signout: async (): Promise<void> => {
-    await apiClient.post('/auth/logout');
+    const refreshToken = await AsyncStorage.getItem('refreshToken');
+    console.log(refreshToken)
+    await apiClient.post('/auth/sign-out', refreshToken);
+  },
+
+  refresh: async (): Promise<RefreshResponse> => {
+    const refreshToken = await AsyncStorage.getItem('refreshToken');
+    const response = await apiClient.post('/auth/refresh', refreshToken);
+    return response.data;
   },
 };

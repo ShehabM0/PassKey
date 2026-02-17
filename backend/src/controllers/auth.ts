@@ -86,7 +86,7 @@ const signOut = async(req: Request, res: Response) => {
 }
 
 const refresh = async(req: Request, res: Response) => {
-  const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+  const refreshToken = req.body.refreshToken;
   if(!refreshToken)
     return res.status(404).json({ message: "Refresh token required!"})
 
