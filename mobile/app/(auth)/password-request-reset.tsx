@@ -4,6 +4,7 @@ import { useCountdown } from '@/context/CountdownContext';
 import { Colors } from '@/components/common/colors';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { authApi } from '@/api/auth';
 import {
   KeyboardAvoidingView,
   ActivityIndicator,
@@ -29,9 +30,15 @@ export default function RequestPasswordResetScreen() {
       return;
     }
 
-    setCountdown(30);
+    // setCountdown(30);
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 5000); 
+    try {
+      await authApi.requestPasswordReset(email);
+    } catch (error: any) {
+      Alert.alert('Password Reset Failed', error.message);
+    } finally {
+      setIsLoading(false)
+    }
 
     router.push({
       pathname: '/email-sent',

@@ -36,6 +36,12 @@ interface AuthContextType {
 }
 
 
+interface PasswordReset {
+  token: string;
+  password: string;
+}
+
+
 interface PlatformDAO {
   name: string;
   icon: string;
@@ -52,5 +58,6 @@ interface SuccessMessageProps {
 
 export { 
   User, SignupCredentials, SigninCredentials, AuthResponse, RefreshResponse, AuthContextType,
+  PasswordReset,
   PlatformDAO, CredentialDAO, SuccessMessageProps
 }

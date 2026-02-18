@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       } 
     
-      if(refreshToken) {
+      if(!refreshToken) {
         refresh();
       }
       
@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await authApi.signup(credentials);
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Login failed';
+      const message = error.response?.data?.error || 'Login failed';
       throw new Error(message);
     }
   };
@@ -52,7 +52,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await AsyncStorage.setItem('accessToken', response.accessToken);
       await AsyncStorage.setItem('refreshToken', response.refreshToken);
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Login failed';
+      console.log(error.response)
+      const message = error.response?.data?.error || 'Login failed';
       throw new Error(message);
     }
   };

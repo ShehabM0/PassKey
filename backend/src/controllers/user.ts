@@ -63,9 +63,10 @@ const vefrifyEmail = async(req: Request, res: Response) => {
   }
 }
 
-const resetPassword = async(req: Request, res: Response) => {
+const requestPasswordReset = async(req: Request, res: Response) => {
   const validation = emailSchema.safeParse(req.body)
   if(!validation.success) {
+    console.log("EROR")
     return res.status(400).json({
       message: "Email validation failed!",
       error: errorFormat(validation.error.issues)
@@ -77,13 +78,13 @@ const resetPassword = async(req: Request, res: Response) => {
     const uid = user.id
 
     const token = manageAccessToken.sign(uid)
+    await redis.setex('password-reset:${token}', 15 * 60, uid)
     
     const emailData: EmailDAO = {
       to: user.email,
       subject: "Password reset",
       htmlTempPath: "/src/templates/reset-password.html",
       variables: {
-        uid: uid,
         token: token
       }
     }
@@ -98,8 +99,8 @@ const resetPassword = async(req: Request, res: Response) => {
   }
 }
 
-const verifyResetPassword = async(req: Request, res: Response) => {
-  const { id, token } = req.params
+const passwordReset = async(req: Request, res: Response) => {
+  const { token } = req.params
   const { password } = req.body
 
   const validation = passwordSchema.safeParse(req.body)
@@ -111,15 +112,18 @@ const verifyResetPassword = async(req: Request, res: Response) => {
   }
 
   try {
-    const uid = Number(id)
-    const user = await getUserById(uid)
-    
     const aToken = manageAccessToken.verify(String(token))
-    if(typeof aToken !== "string" && aToken.uid !== uid)
-      return res.status(403).json({ message: 'Forbidden. You can only access your own resources!' })
+    if(typeof aToken === "string")
+      return res.status(403).json({ message: aToken })
 
+    const uid = await redis.get('password-reset:${token}')
+    if(!uid)
+      return res.status(400).json({ message: "Invalid or expired token!" })
+
+    const user = await getUserById(Number(uid))
     user.password = await hashStr(password)
-    const updatedUser = await updateUser(user)
+    await updateUser(user)
+    await redis.del('password-reset:${token}')
 
     return res.status(200).json({ message: 'Your password has been reset.' })
   } catch(e) {
@@ -206,6 +210,6 @@ const verifyUpdatePassword = async(req: Request, res: Response) => {
 
 export {
   sendVerification, vefrifyEmail,
-  resetPassword, verifyResetPassword,
+  requestPasswordReset, passwordReset,
   updatePassword, verifyUpdatePassword 
 }

@@ -15,8 +15,10 @@ import {
     View,
 } from 'react-native';
 import SuccessMessage from '@/components/SuccessMessage';
+import { useAuth } from '@/context/AuthContext';
 
 export default function RegisterScreen() {
+  const { signup } = useAuth();
   const router = useRouter();
 
   const [name, setName] = useState('');
@@ -33,13 +35,17 @@ export default function RegisterScreen() {
       return;
     }
 
-    setSuccess(true);
     setIsLoading(true);
-    setTimeout(() => {
-      setSuccess(false);
+    try {
+      await signup({name, email, password})
+
+      setSuccess(true);
       setIsLoading(false);
-      router.replace('/(auth)/login');
-    }, 3000); 
+      setTimeout(() => router.replace('/(auth)/login'), 1500);
+    } catch(error: any) {
+      Alert.alert('Register Failed', error.message);
+      setIsLoading(false);
+    }
   };
 
   const toggleShowPassword = () => {

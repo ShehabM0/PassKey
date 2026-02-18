@@ -1,9 +1,9 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import SuccessMessage from '@/components/SuccessMessage';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
 import {
   KeyboardAvoidingView,
   ActivityIndicator,
@@ -15,8 +15,11 @@ import {
   Text,
   View,
 } from 'react-native';
+import { authApi } from '@/api/auth';
 
-export default function PasswordResetSScreen() {
+export default function PasswordResetScreen() {
+  const { token } = useLocalSearchParams<{ token: string }>();
+
   const router = useRouter();
 
   const [password, setPassword] = useState('');
@@ -31,13 +34,17 @@ export default function PasswordResetSScreen() {
       return;
     }
 
-    setSuccess(true);
     setIsLoading(true);
-    setTimeout(() => {
-      setSuccess(false);
-      setIsLoading(false)
-      router.replace('/(auth)/login');
-    }, 3000); 
+    try {
+      await authApi.passwordReset({token, password});
+
+      setSuccess(true);
+      setTimeout(() => router.replace('/(auth)/login'), 1500);
+    } catch (error: any) {
+      Alert.alert('Password Reset Failed!', error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const toggleShowPassword = () => {

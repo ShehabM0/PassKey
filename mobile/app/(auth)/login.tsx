@@ -14,8 +14,10 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginScreen() {
+  const { signin } = useAuth();
   const router = useRouter();
 
   const [email, setEmail] = useState('');
@@ -30,7 +32,14 @@ export default function LoginScreen() {
     }
 
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 5000); 
+    try {
+      await signin({ email, password });
+      router.replace('/(app)/homepage');
+    } catch (error: any) {
+      Alert.alert('Login Failed', error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const toggleShowPassword = () => {
