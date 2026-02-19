@@ -173,7 +173,7 @@ const updatePassword = async(req: Request, res: Response) => {
 
   const token = manageAccessToken.sign(uid)
   const emailData: EmailDAO = {
-    to: "dummyshehab@gmail.com",
+    to: user.email,
     subject: "Password update",
     htmlTempPath: "/src/templates/update-password.html",
     variables: {

@@ -51,8 +51,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       await AsyncStorage.setItem('accessToken', response.accessToken);
       await AsyncStorage.setItem('refreshToken', response.refreshToken);
+      await AsyncStorage.setItem('userData', JSON.stringify(response.user));
+
+      setUser(response.user);
     } catch (error: any) {
-      console.log(error.response)
       const message = error.response?.data?.error || 'Login failed';
       throw new Error(message);
     }

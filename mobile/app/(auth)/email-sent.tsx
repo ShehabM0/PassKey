@@ -3,24 +3,45 @@ import { Colors } from '@/components/common/colors';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import Entypo from '@expo/vector-icons/Entypo';
+import { authApi } from '@/api/auth';
 import {
     ActivityIndicator,
     TouchableOpacity,
     StyleSheet,
     Platform,
     Text,
-    View
+    View,
+    Alert
 } from 'react-native';
+import { userApi } from '@/api/user';
 
 export default function EmailSentScreen() {
   const { countdown, finishedCountdown, setCountdown } = useCountdown();
   const [isLoading, setIsLoading] = useState(false);
-  const { email, subject } = useLocalSearchParams();
+  const { fromScreen, data, email, subject } = useLocalSearchParams();
     
   const handlePasswordReset = async () => {
     setIsLoading(true);
     setCountdown(30);
-    setTimeout(() => setIsLoading(false), 5000); 
+    if(fromScreen === '/password-request-reset') {
+      try {
+        await authApi.requestPasswordReset(String(email));
+      } catch (error: any) {
+        Alert.alert('Password Reset Failed', error.message);
+      } finally {
+        setIsLoading(false)
+      }
+    } else if(fromScreen === '/password-request-update') {
+      const oldPassword = data[0];
+      const newPassword = data[1];
+      try {
+        await userApi.passwordUpdate({oldPassword, newPassword});
+      } catch (error: any) {
+        Alert.alert('Password Update Failed', error.message);
+      } finally {
+        setIsLoading(false)
+      }
+    }
   };
 
   return (

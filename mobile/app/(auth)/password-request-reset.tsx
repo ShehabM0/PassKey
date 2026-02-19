@@ -30,20 +30,24 @@ export default function RequestPasswordResetScreen() {
       return;
     }
 
-    // setCountdown(30);
+    setCountdown(30);
     setIsLoading(true);
     try {
       await authApi.requestPasswordReset(email);
+
+      router.push({
+        pathname: '/email-sent',
+        params: {
+          fromScreen: '/password-request-reset',
+          email: email,
+          subject: PASSWORD_RESET_STR
+        }
+      });
     } catch (error: any) {
       Alert.alert('Password Reset Failed', error.message);
     } finally {
       setIsLoading(false)
     }
-
-    router.push({
-      pathname: '/email-sent',
-      params: { email: email, subject: PASSWORD_RESET_STR }
-    });
   };
 
   return (

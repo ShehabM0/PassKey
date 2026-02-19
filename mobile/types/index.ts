@@ -41,6 +41,11 @@ interface PasswordReset {
   password: string;
 }
 
+interface PasswordUpdate {
+  oldPassword: string;
+  newPassword: string;
+}
+
 
 interface PlatformDAO {
   name: string;
@@ -58,6 +63,6 @@ interface SuccessMessageProps {
 
 export { 
   User, SignupCredentials, SigninCredentials, AuthResponse, RefreshResponse, AuthContextType,
-  PasswordReset,
+  PasswordReset, PasswordUpdate,
   PlatformDAO, CredentialDAO, SuccessMessageProps
 }

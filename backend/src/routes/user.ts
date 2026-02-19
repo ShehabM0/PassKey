@@ -11,6 +11,6 @@ usersRoutes.post('/password/request-reset', requestPasswordReset)
 usersRoutes.post('/password/reset/:token', passwordReset)
 
 usersRoutes.patch('/password/update/', authMiddleware, authorizeUser, updatePassword)
-usersRoutes.get('/password/update/:token', authMiddleware, authorizeUser, verifyUpdatePassword)
+usersRoutes.post('/password/update/:token', authMiddleware, authorizeUser, verifyUpdatePassword)
 
 export default usersRoutes

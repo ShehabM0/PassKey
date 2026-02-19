@@ -94,6 +94,8 @@ const DATA = [
 
 const PASSWORD_RESET_STR = "reset your password";
 
+const PASSWORD_UPDATE_STR = "update your password";
+
 const EMAIL_VERIFY_STR = "verify your email";
 
-export { DATA, PASSWORD_RESET_STR, EMAIL_VERIFY_STR }
+export { DATA, PASSWORD_RESET_STR, PASSWORD_UPDATE_STR, EMAIL_VERIFY_STR }

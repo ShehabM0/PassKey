@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 export default function HomeScreen() {
   const router = useRouter();
 
+  console.log("AAAAAAAAAAAAAAA")
   const credentialPage = (cred: any) => {
     router.push({
       pathname: '/credential',

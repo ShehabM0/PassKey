@@ -15,12 +15,12 @@ export const authApi = {
 
   signout: async (): Promise<void> => {
     const refreshToken = await AsyncStorage.getItem('refreshToken');
-    await apiClient.post('/auth/sign-out', refreshToken);
+    await apiClient.post('/auth/sign-out', { refreshToken });
   },
 
   refresh: async (): Promise<RefreshResponse> => {
     const refreshToken = await AsyncStorage.getItem('refreshToken');
-    const response = await apiClient.post('/auth/refresh', refreshToken);
+    const response = await apiClient.post('/auth/refresh', { refreshToken });
     return response.data;
   },
 

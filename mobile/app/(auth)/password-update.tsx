@@ -1,10 +1,13 @@
+import { PASSWORD_UPDATE_STR } from '@/components/common/data';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import SuccessMessage from '@/components/SuccessMessage';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import PageHeader from '@/components/PageHeader';
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useAuth } from '@/context/AuthContext';
+import React, { useEffect, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { userApi } from '@/api/user';
 import {
   KeyboardAvoidingView,
   ActivityIndicator,
@@ -16,10 +19,14 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useCountdown } from '@/context/CountdownContext';
 
 export default function PasswordUpdateScreen() {
+  const { token } = useLocalSearchParams<{ token: string }>();
+  const { user } = useAuth();
   const router = useRouter();
 
+  const { setCountdown } = useCountdown();
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
@@ -28,26 +35,60 @@ export default function PasswordUpdateScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handlePassPress  = async () => {
+  useEffect(() => {
+    console.log(token);
+    if(!token) return;
+    passwordUpdate();
+  }, [token])
+
+  const requestPasswordUpdate  = async () => {
     if (!oldPassword || !newPassword) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
-    setSuccess(true);
+    setCountdown(30);
     setIsLoading(true);
-    setTimeout(() => {
-      setSuccess(false);
-      setIsLoading(false)
-      router.dismissAll();
-      router.replace('/(auth)/login');
-    }, 3000); 
+    try {
+      await userApi.requestPasswordUpdate({oldPassword, newPassword});
+
+      router.push({
+        pathname: '/email-sent',
+        params: {
+          fromScreen: '/password-request-update',
+          data: [
+            oldPassword,
+            newPassword
+          ],
+          email: user?.email,
+          subject: PASSWORD_UPDATE_STR
+        }
+      });
+    } catch(error: any) {
+      const message = error?.response?.data?.error || 'Something went wrong';
+      Alert.alert('Password Request Update Failed!', message);
+      setIsLoading(false);
+    }
+  };
+
+  const passwordUpdate = async () => {
+    setIsLoading(true);
+    try {
+      await userApi.passwordUpdate(token);
+      setSuccess(true);
+      setIsLoading(false);
+      setTimeout(() => router.replace('/(app)/settings'), 1500);
+    } catch(error: any) {
+      const message = error?.response?.data?.message || error.message;
+      Alert.alert(`${token}`, message);
+      setIsLoading(false);
+    }
   };
 
   const toggleShowPassword = () => {
     setShowOldPassword(!showOldPassword);
     setshowNewPassword(!showNewPassword);
-  }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -102,7 +143,7 @@ export default function PasswordUpdateScreen() {
 
           <TouchableOpacity
             style={[styles.button, isLoading && styles.buttonDisabled]}
-            onPress={handlePassPress}
+            onPress={requestPasswordUpdate}
             disabled={isLoading}
           >
             {isLoading ? (
