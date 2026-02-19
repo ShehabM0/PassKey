@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   messageCont: {
+    minWidth: '60%',
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',

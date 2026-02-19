@@ -2,6 +2,7 @@ interface User {
   id: string;
   email: string;
   name?: string;
+  email_confirm?: boolean;
 }
 
 interface SignupCredentials {
@@ -30,6 +31,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticating: boolean;
   isAuthenticated: boolean;
+  refreshUser: () => Promise<User>;
   signup: (credentials: SignupCredentials) => Promise<void>;
   signin: (credentials: SigninCredentials) => Promise<void>;
   signout: () => Promise<void>;

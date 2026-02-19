@@ -4,6 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import Entypo from '@expo/vector-icons/Entypo';
 import { authApi } from '@/api/auth';
+import { userApi } from '@/api/user';
 import {
     ActivityIndicator,
     TouchableOpacity,
@@ -13,7 +14,6 @@ import {
     View,
     Alert
 } from 'react-native';
-import { userApi } from '@/api/user';
 
 export default function EmailSentScreen() {
   const { countdown, finishedCountdown, setCountdown } = useCountdown();
@@ -27,7 +27,7 @@ export default function EmailSentScreen() {
       try {
         await authApi.requestPasswordReset(String(email));
       } catch (error: any) {
-        Alert.alert('Password Reset Failed', error.message);
+        Alert.alert('Password Reset Failed!', error.message);
       } finally {
         setIsLoading(false)
       }
@@ -35,9 +35,17 @@ export default function EmailSentScreen() {
       const oldPassword = data[0];
       const newPassword = data[1];
       try {
-        await userApi.passwordUpdate({oldPassword, newPassword});
+        await userApi.requestPasswordUpdate({oldPassword, newPassword});
       } catch (error: any) {
-        Alert.alert('Password Update Failed', error.message);
+        Alert.alert('Password Update Failed!', error.message);
+      } finally {
+        setIsLoading(false)
+      }
+    } else if(fromScreen === '/settings') {
+      try {
+        await authApi.requestPasswordReset(String(email));
+      } catch (error: any) {
+        Alert.alert('Email Verification Failed!', error.message);
       } finally {
         setIsLoading(false)
       }

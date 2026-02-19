@@ -9,8 +9,21 @@ import { type EmailDAO } from '../config/smtp.ts'
 import { logger } from '../config/logger.ts'
 import { redis } from '../config/redis.ts'
 
+const currentUser = async(req: Request, res: Response) => {
+  const id = req.userId;
+  try {
+    const uid = Number(id)
+    const user = await getUserById(uid)
+    return res.status(200).json({ user: user })
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Error fetching user!'
+    res.status(400).json({ message: message })
+  }
+}
+
+
 const sendVerification = async(req: Request, res: Response) => {
-  const { id } = req.params
+  const id = req.userId;
   try {
     const uid = Number(id)
     const user = await getUserById(uid)
@@ -24,11 +37,10 @@ const sendVerification = async(req: Request, res: Response) => {
       subject: "Email verification",
       htmlTempPath: "/src/templates/verify-email.html",
       variables: {
-        uid: uid,
         token: token
       }
     }
-    const email = await sendEmail(emailData)
+    await sendEmail(emailData)
 
     res.status(200).json({ message: `An email has been sent to ${user.email}, check your inbox.` })
   } catch (e) {
@@ -38,7 +50,8 @@ const sendVerification = async(req: Request, res: Response) => {
 }
 
 const vefrifyEmail = async(req: Request, res: Response) => {
-  const { id, token } = req.params
+  const { token } = req.params
+  const id = req.userId;
   try {
     const uid = Number(id)
     const user = await getUserById(uid)
@@ -62,6 +75,7 @@ const vefrifyEmail = async(req: Request, res: Response) => {
       return res.status(statusCode).json({ message: "Internal server error!" })
   }
 }
+
 
 const requestPasswordReset = async(req: Request, res: Response) => {
   const validation = emailSchema.safeParse(req.body)
@@ -139,6 +153,7 @@ const passwordReset = async(req: Request, res: Response) => {
   }
 }
 
+
 const updatePassword = async(req: Request, res: Response) => {
   const { oldPassword, newPassword } = req.body
   const oldPassValidation = passwordSchema.safeParse({ password: oldPassword })
@@ -209,6 +224,7 @@ const verifyUpdatePassword = async(req: Request, res: Response) => {
 }
 
 export {
+  currentUser,
   sendVerification, vefrifyEmail,
   requestPasswordReset, passwordReset,
   updatePassword, verifyUpdatePassword 

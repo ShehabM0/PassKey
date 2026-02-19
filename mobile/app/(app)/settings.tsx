@@ -1,32 +1,73 @@
-import CreatePageHeader from '@/components/PageHeader';
 import { EMAIL_VERIFY_STR } from '@/components/common/data';
 import { useCountdown } from '@/context/CountdownContext';
-import { StyleSheet, Text, View } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import CreatePageHeader from '@/components/PageHeader';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '@/components/common/colors';
 import SettingRow from '@/components/SettingRow';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { router, useLocalSearchParams } from 'expo-router';
+import { authApi } from '@/api/auth';
+import { useEffect, useState } from 'react';
+import { userApi } from '@/api/user';
+import PopupMessage from '@/components/PopUpMessage';
+import SuccessMessage from '@/components/SuccessMessage';
 
 export default function SettingsScreen() {
-  const [username, setUsername] = useState('Shehab Mohamed');
-  const [email, setEmail] = useState('shehab@gmail.com');
+  const { token } = useLocalSearchParams<{ token: string }>();
+  const { user, refreshUser } = useAuth();
+
+  const [success, setSuccess] = useState(false);
+  const [popup, setPopup] = useState(false);
 
   const { finishedCountdown, setCountdown } = useCountdown();
+
+  useEffect(() => {
+    if(token)
+      verifyEmail();
+  }, [token])
 
   const updatePass = () => {
     router.push('/(auth)/password-update');
   }
 
-  const sendEmail = () => {
+  const verifyEmail = async () => {
+    if(user?.email_confirm) {
+      setPopup(true);
+      setTimeout(() => setPopup(false), 5000); 
+      return;
+    }
+
+    if(token) {
+      try {
+        await userApi.emailVerify(token);
+        await refreshUser();
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000); 
+      } catch(error: any) {
+        const message = error?.response?.data?.message || 
+        error?.response?.data?.error ||
+        error.message;
+        Alert.alert('Email Verification Failed!', message);
+      }
+      return;
+    }
+
     if(finishedCountdown)
       setCountdown(30);
+    await userApi.requestEmailVerify();
     router.push({
       pathname: '/(auth)/email-sent',
-      params: { email: email, subject: EMAIL_VERIFY_STR }
+      params: { 
+        fromScreen: '/settings',
+        email: user?.email,
+        subject: EMAIL_VERIFY_STR
+      }
     });
   }
 
-  const logout = () => {
+  const logout = async () => {
+    await authApi.signout();
     router.push('/(auth)/login');
   }
 
@@ -34,15 +75,25 @@ export default function SettingsScreen() {
     <View style={styles.container}>
       <CreatePageHeader />
 
+      { success &&
+        <SuccessMessage message='Email verified.'/> }
+
+      { popup &&
+        <PopupMessage message='Email is already verified.'/> }
+
       <View style={styles.content}>
         {/* Profile */}
         <View style={styles.profile}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{username[0]}</Text>
+            <Text style={styles.avatarText}>{user?.name? user.name[0] : '?'}</Text>
           </View>
 
-          <Text style={styles.username}>Shehab Mohamed</Text>
-          <Text style={styles.email}>{email}</Text>
+          <Text style={styles.username}>{user?.name}</Text>
+          <View style={styles.emailContainer}>
+            <Text style={styles.email}>{user?.email}</Text>
+            { user?.email_confirm && 
+              <FontAwesome name="check-circle" size={15} color="green" style={styles.verifyIcon}/> }
+          </View>
         </View>
 
         {/* Section */}
@@ -50,7 +101,7 @@ export default function SettingsScreen() {
 
         <View style={styles.body}>
           <SettingRow label="Update password" onPress={() => updatePass()} />
-          <SettingRow label="Verify email" onPress={() => sendEmail()}/>
+          <SettingRow label="Verify email" onPress={() => verifyEmail()}/>
           <SettingRow label="Logout" red onPress={() => logout()}/>
         </View>
       </View>
@@ -96,10 +147,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  emailContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+
   email: {
     fontSize: 15,
     color: Colors.gray500,
-    marginTop: 5,
+  },
+
+  verifyIcon: {
+    marginLeft: 5,
   },
 
   bodyHeader: {

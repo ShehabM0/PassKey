@@ -1,4 +1,4 @@
-import { SignupCredentials, SigninCredentials, AuthResponse, RefreshResponse, PasswordReset } from '../types'
+import { SignupCredentials, SigninCredentials, AuthResponse, RefreshResponse, PasswordReset, User } from '../types'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './client';
 
@@ -21,6 +21,18 @@ export const authApi = {
   refresh: async (): Promise<RefreshResponse> => {
     const refreshToken = await AsyncStorage.getItem('refreshToken');
     const response = await apiClient.post('/auth/refresh', { refreshToken });
+    return response.data;
+  },
+
+  currentUser : async (): Promise<User> => {
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    const requestHeader = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    const response = await apiClient.get('/users/me', requestHeader);
     return response.data;
   },
 
