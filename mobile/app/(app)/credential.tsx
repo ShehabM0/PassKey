@@ -1,5 +1,4 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { CredentialDAO } from '@/types';
 import SuccessMessage from '@/components/SuccessMessage';
 import CredentialCard from '@/components/CredentialCard';
 import CreatePageHeader from '@/components/PageHeader';
@@ -12,6 +11,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { DATA } from '@/components/common/data';
 import { useEffect, useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
+import { CredentialDAO } from '@/types';
 import { router } from 'expo-router';
 import {
   ActivityIndicator,
@@ -108,7 +108,7 @@ export default function CredentialPage() {
 
   return (
     <View style={styles.container} >
-      <CreatePageHeader color={Colors.white}/>
+      <CreatePageHeader color={Colors.white} />
 
       { success &&
         <SuccessMessage message='Your credential has been edited'/> }

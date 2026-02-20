@@ -1,17 +1,17 @@
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { EMAIL_VERIFY_STR } from '@/components/common/data';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useCountdown } from '@/context/CountdownContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import SuccessMessage from '@/components/SuccessMessage';
 import CreatePageHeader from '@/components/PageHeader';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import PopupMessage from '@/components/PopUpMessage';
 import { Colors } from '@/components/common/colors';
 import SettingRow from '@/components/SettingRow';
 import { useAuth } from '@/context/AuthContext';
-import { router, useLocalSearchParams } from 'expo-router';
-import { authApi } from '@/api/auth';
 import { useEffect, useState } from 'react';
+import { authApi } from '@/api/auth';
 import { userApi } from '@/api/user';
-import PopupMessage from '@/components/PopUpMessage';
-import SuccessMessage from '@/components/SuccessMessage';
 
 export default function SettingsScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();
@@ -73,7 +73,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <CreatePageHeader />
+      <CreatePageHeader color={Colors.gray100} />
 
       { success &&
         <SuccessMessage message='Email verified.'/> }

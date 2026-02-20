@@ -51,10 +51,6 @@ export default function HomeHeader() {
             )
           }
         </View>
-
-        <TouchableOpacity style={styles.filterButton}>
-          <MaterialIcons name="filter-list" size={24} color={Colors.black} />
-        </TouchableOpacity>
       </View>
     </View>
   )
@@ -65,7 +61,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gray100,
     paddingTop: 60,
     paddingHorizontal: 20,
-    paddingBottom: 16,
   },
 
   topBar: {
@@ -96,7 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.white,
     borderRadius: 10,
     paddingHorizontal: 12,
     height: 44,

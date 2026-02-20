@@ -30,7 +30,7 @@ export default function CredentialCard({ name, email, onPress }: Credential) {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.white,
     borderRadius: 12,
     paddingVertical: 10,
     marginBottom: 12,
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     padding: 5,
     borderRadius: 10,
+    backgroundColor: Colors.gray100
   },
   leftColumn: {
     width: '20%',

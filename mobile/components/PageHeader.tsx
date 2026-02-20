@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/components/common/colors';
 import { router } from 'expo-router';
@@ -21,7 +21,7 @@ export default function PageHeader({color}: any) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.white,
     paddingTop: 60,
     paddingHorizontal: 20,
     paddingBottom: 16,

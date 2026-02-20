@@ -8,7 +8,6 @@ import { useRouter } from 'expo-router';
 export default function HomeScreen() {
   const router = useRouter();
 
-  console.log("AAAAAAAAAAAAAAA")
   const credentialPage = (cred: any) => {
     router.push({
       pathname: '/credential',
@@ -25,6 +24,14 @@ export default function HomeScreen() {
             ListHeaderComponent={
               <Text style={styles.textBody}>Your vaults</Text>
             }
+            ListEmptyComponent={
+              <View style={styles.nocredentialsContainer}>
+                <Text style={styles.emptyTitle}>No vaults yet</Text>
+                <Text style={styles.emptySubtitle}>
+                  Added credentials will appear here
+                </Text>
+              </View>
+            }
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ padding: 20 }}
             renderItem={({ item }) => (
@@ -38,8 +45,9 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   bodyContainer: {
-    backgroundColor: Colors.white,
-    marginBottom: 200,
+    flex: DATA.length === 0 ? 1 : 0,
+    backgroundColor: Colors.gray100,
+    marginBottom: 150,
   },
 
   textBody: {
@@ -47,5 +55,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 12,
     color: Colors.gray900,
+  },
+
+  nocredentialsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20
+  },
+
+  emptyTitle: {
+    marginTop: 12,
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.gray700,
+  },
+
+  emptySubtitle: {
+    marginTop: 4,
+    fontSize: 14,
+    color: Colors.gray500,
+    textAlign: 'center',
   },
 });
