@@ -1,16 +1,16 @@
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { View, Text, StyleSheet, Touchable, TouchableOpacity } from 'react-native';
 import { Colors } from '@/components/common/colors';
 
 type Credential = {
-  name: string;
+  platformTitle: string;
   slug?: string;
   email: string;
   password?: string;
   onPress: () => void
 };
 
-export default function CredentialCard({ name, email, onPress }: Credential) {
+export default function CredentialCard({ platformTitle, email, onPress }: Credential) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.card}>
       <View style={styles.leftColumn}>
@@ -20,7 +20,7 @@ export default function CredentialCard({ name, email, onPress }: Credential) {
       </View>
 
       <View style={styles.rightColumn}>
-        <Text style={styles.platformName}>{name}</Text>
+        <Text style={styles.platformName}>{platformTitle}</Text>
         <Text style={styles.slug}>{email}</Text>
       </View>
     </TouchableOpacity>

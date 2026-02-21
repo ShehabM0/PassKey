@@ -1,5 +1,7 @@
 import { CountdownProvider } from '../context/CountdownContext';
+import { ApolloProvider } from '@apollo/client/react';
 import { AuthProvider } from '@/context/AuthContext';
+import apolloClient from '@/api/config/graphql';
 import { Stack } from 'expo-router';
 
 function RootLayoutNav() {
@@ -13,10 +15,12 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <CountdownProvider>
-      <AuthProvider>
-        <RootLayoutNav />
-      </AuthProvider>
-    </CountdownProvider>
+    <ApolloProvider client={apolloClient}>
+      <CountdownProvider>
+        <AuthProvider>
+          <RootLayoutNav />
+        </AuthProvider>
+      </CountdownProvider>
+    </ApolloProvider>
   );
 }

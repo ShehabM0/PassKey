@@ -4,7 +4,7 @@ import { useCountdown } from '@/context/CountdownContext';
 import { Colors } from '@/components/common/colors';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { authApi } from '@/api/auth';
+import { authApi } from '@/api/rest/auth';
 import {
   KeyboardAvoidingView,
   ActivityIndicator,

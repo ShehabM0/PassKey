@@ -10,8 +10,8 @@ import { Colors } from '@/components/common/colors';
 import SettingRow from '@/components/SettingRow';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
-import { authApi } from '@/api/auth';
-import { userApi } from '@/api/user';
+import { authApi } from '@/api/rest/auth';
+import { userApi } from '@/api/rest/user';
 
 export default function SettingsScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();

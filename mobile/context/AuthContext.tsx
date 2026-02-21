@@ -1,7 +1,7 @@
 import { User, SigninCredentials, AuthContextType, SignupCredentials } from '../types';
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authApi } from '../api/auth';
+import { authApi } from '../api/rest/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

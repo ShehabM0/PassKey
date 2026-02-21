@@ -15,7 +15,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { authApi } from '@/api/auth';
+import { authApi } from '@/api/rest/auth';
 
 export default function PasswordResetScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();

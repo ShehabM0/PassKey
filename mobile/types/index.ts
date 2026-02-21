@@ -1,33 +1,33 @@
-interface User {
+export interface User {
   id: string;
   email: string;
   name?: string;
   email_confirm?: boolean;
 }
 
-interface SignupCredentials {
+export interface SignupCredentials {
   name: string;
   email: string;
   password: string;
 }
 
-interface SigninCredentials {
+export interface SigninCredentials {
   email: string;
   password: string;
 }
 
-interface RefreshResponse {
+export interface RefreshResponse {
   accessToken: string;
   refreshToken: string;
 }
 
-interface AuthResponse {
+export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
   user: User;
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   isAuthenticating: boolean;
   isAuthenticated: boolean;
@@ -38,33 +38,27 @@ interface AuthContextType {
 }
 
 
-interface PasswordReset {
+export interface PasswordReset {
   token: string;
   password: string;
 }
 
-interface PasswordUpdate {
+export interface PasswordUpdate {
   oldPassword: string;
   newPassword: string;
 }
 
 
-interface PlatformDAO {
+export interface PlatformDAO {
   name: string;
   icon: string;
 }
 
-interface CredentialDAO {
+export interface CredentialDAO {
   email: string;
   password: string;
 }
 
-interface SuccessMessageProps {
+export interface SuccessMessageProps {
   message: string;
-}
-
-export { 
-  User, SignupCredentials, SigninCredentials, AuthResponse, RefreshResponse, AuthContextType,
-  PasswordReset, PasswordUpdate,
-  PlatformDAO, CredentialDAO, SuccessMessageProps
 }

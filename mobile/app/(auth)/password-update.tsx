@@ -7,7 +7,7 @@ import PageHeader from '@/components/PageHeader';
 import { useAuth } from '@/context/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { userApi } from '@/api/user';
+import { userApi } from '@/api/rest/user';
 import {
   KeyboardAvoidingView,
   ActivityIndicator,

@@ -3,8 +3,8 @@ import { Colors } from '@/components/common/colors';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import Entypo from '@expo/vector-icons/Entypo';
-import { authApi } from '@/api/auth';
-import { userApi } from '@/api/user';
+import { authApi } from '@/api/rest/auth';
+import { userApi } from '@/api/rest/user';
 import {
     ActivityIndicator,
     TouchableOpacity,
