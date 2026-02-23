@@ -38,6 +38,7 @@ export const typeDefs = gql`
   }
 
   type PlatformDAO {
+    id: Int
     slug: String!
     name: String!
     path: String!
@@ -58,8 +59,7 @@ export const typeDefs = gql`
   }
 
   type Platform {
-    filter(query: String!): [PlatformDAO!]!
-    fetch(offset: Int, limit: Int): PlatformConnection!
+    fetch(query: String, offset: Int!, limit: Int!): PlatformConnection!
   }
 
   type Query {

@@ -1,12 +1,14 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/components/common/colors';
+import Svg, { Path } from 'react-native-svg';
 
 export default function PlatformRow({ item, onPress }: any) {
   return (
     <TouchableOpacity style={styles.row} onPress={() => onPress(item)}>
       <View style={styles.iconContainer}>
-        <MaterialIcons name={item.icon} size={22} color={Colors.black} />
+        <Svg width={20} height={20} viewBox="0 0 24 24" >
+          <Path d={item.path} fill="#000" />
+        </Svg>
       </View>
 
       <Text style={styles.name}>{item.name}</Text>

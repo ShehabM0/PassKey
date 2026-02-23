@@ -36,6 +36,24 @@ export const GET_USER_CREDENTIALS = gql`
   }
 `;
 
-export default { 
-  GET_USER, GET_USER_CREDENTIALS
-};
+export const GET_PLATFORMS = gql`
+  query GetPlatforms($query: String, $offset: Int!, $limit: Int!) {
+    platform {
+      fetch(query: $query, offset: $offset, limit: $limit) {
+        data {
+          id
+          slug
+          name
+          path
+          aliases
+        }
+        pagination {
+          nextOffset
+          limit
+          totalItems
+          hasNextPage
+        }
+      }
+    }
+  }
+`;

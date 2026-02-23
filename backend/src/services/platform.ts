@@ -2,6 +2,7 @@ import type { ListPaginationParams, ListPaginatedResult } from '../db/pagination
 import * as simpleIcons from 'simple-icons'
 
 type Platform = {
+  id: number
   slug: string
   name: string
   path: string
@@ -11,9 +12,11 @@ type Platform = {
 class managePlatform {
   private list: Platform[] = []
   private map: Map<string, Platform> = new Map()
+  private id: number = 0;
 
   init(): number{
     this.list = Object.values(simpleIcons).map((icon: any) => ({
+      id: this.id++,
       slug: icon.slug,
       name: icon.title,
       path: icon.path,
@@ -34,12 +37,10 @@ class managePlatform {
     return this.list.length
   }
 
-  search(query: string): Platform[] {
+  search(query: string, params: ListPaginationParams): ListPaginatedResult<Platform> {
     if (!this.list.length)
       throw new Error('Platforms not initialized. Call init() first!');
     const q = query?.toLowerCase().trim();
-    if (!q || !q.length)
-      return this.list
     
     const platforms = this.list.filter((platform) =>
       platform.name.toLocaleLowerCase().includes(q) ||
@@ -54,12 +55,31 @@ class managePlatform {
       return scoreB - scoreA
     })
 
-    return platforms
+    const total = platforms.length
+    const offset = params?.offset ?? 0, limit = params?.limit ?? total
+
+    const from = offset
+    const to = Math.min(from + limit, total)
+
+    const data = platforms.slice(offset, to)
+
+    const pagination: ListPaginatedResult<Platform> = {
+      data: data,
+      pagination: {
+        nextOffset: to,
+        limit: limit,
+        totalItems: total,
+        hasNextPage: to < total,
+      }
+    }
+
+    return pagination
   }
 
   fetch(params: ListPaginationParams): ListPaginatedResult<Platform>{
     if (!this.list.length)
       throw new Error('Platforms not initialized. Call init() first!');
+
 
     const total = this.list.length
     const offset = params?.offset ?? 0, limit = params?.limit ?? total

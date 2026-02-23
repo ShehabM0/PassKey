@@ -4,6 +4,7 @@ import SuccessMessage from '@/components/SuccessMessage';
 import PlatfromPicker from '@/components/PlatformPicker';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useQuery } from '@apollo/client/react';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -24,7 +25,6 @@ interface PlatformDAO{
 }
 
 export default function CreateCredential() {
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setshowPassword] = useState(false);
@@ -35,8 +35,6 @@ export default function CreateCredential() {
   const [platfromPicker, setPlatformPicker] = useState(false);
 
   const handleSubmit = async () => {
-    console.log(platform);
-
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;

@@ -32,3 +32,43 @@ export interface PaginationVars {
   page: number;
   limit: number;
 }
+
+
+
+export interface Platform {
+  id: string;
+  slug: string;
+  name: string;
+  path: string;
+  aliases: string[];
+}
+
+export interface PlatformFetch {
+  data: Platform[];
+  pagination: ListPagination;
+}
+
+export interface PlatformQueryRoot {
+  platform: {
+    fetch: PlatformFetch;
+  };
+}
+
+export interface PlatformResponse {
+  platform: {
+    fetch: PlatformFetch;
+  };
+}
+
+export interface ListPagination {
+  nextOffset: number;
+  limit: number;
+  totalItems: number;
+  hasNextPage: boolean;
+}
+
+export interface ListPaginationVars {
+  query?: string | null;
+  offset: number;
+  limit: number;
+}
