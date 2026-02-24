@@ -1,10 +1,11 @@
-import CreatePageHeader from '@/components/PageHeader';
+import { useMutation } from '@apollo/client/react';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { CREATE_CREDENTIAL } from '@/api/graphql/mutations';
 import SuccessMessage from '@/components/SuccessMessage';
 import PlatfromPicker from '@/components/PlatformPicker';
+import CreatePageHeader from '@/components/PageHeader';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useQuery } from '@apollo/client/react';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -18,16 +19,20 @@ import {
   Text,
   View,
 } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 
 interface PlatformDAO{
+  id: number;
   name: string;
-  icon: string;
+  path: string;
 }
 
 export default function CreateCredential() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setshowPassword] = useState(false);
+
+  const [createCredential] = useMutation(CREATE_CREDENTIAL);
 
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,13 +45,21 @@ export default function CreateCredential() {
       return;
     }
 
-    setSuccess(true);
     setIsLoading(true);
-    setTimeout(() => {
-      setSuccess(false);
+    try {
+      await createCredential({ variables: {
+        platformTitle: platform?.name,
+        email: email,
+        password: password
+      }});
+
+      setSuccess(true);
       setIsLoading(false);
-      router.back();
-    }, 3000); 
+      setTimeout(() => router.replace('/homepage'), 1500);
+    } catch(error: any) {
+      Alert.alert('Credential Creation Failed!', error.message);
+      setIsLoading(false);
+    }
   };
 
   const toggleShowPassword = () => {
@@ -85,7 +98,9 @@ export default function CreateCredential() {
         <View style={styles.form}>
           { platform ? (
               <TouchableOpacity style={styles.platformInputContainer} onPress={openPlatformPicker} disabled={isLoading}>
-                <MaterialIcons name={platform.icon} size={30} color={Colors.black} />
+                <Svg width={24} height={24} viewBox="0 0 24 24" >
+                  <Path d={platform?.path} fill="#000" />
+                </Svg>
                 <Text style={styles.platformInputText}>{platform.name}</Text>
                 <MaterialIcons name="edit" size={18} color={Colors.black} />
               </TouchableOpacity>

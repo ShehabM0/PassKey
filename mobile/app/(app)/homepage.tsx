@@ -6,15 +6,15 @@ import SplashScreen from '@/components/SplashScreen';
 import { Colors } from '@/components/common/colors';
 import HomeHeader from '@/components/HomeHeader';
 import { useQuery } from '@apollo/client/react';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 
 export default function HomeScreen() {
   const router = useRouter();
   const limit = 20;
 
   const [page, setPage] = useState(1);
-  const { data, loading, fetchMore } = useQuery<
+  const { data, loading, error, fetchMore, refetch } = useQuery<
     GetUserCredentialsData,
     PaginationVars>
     (
@@ -26,7 +26,6 @@ export default function HomeScreen() {
 
   const credentials = data?.me?.credentials?.data || [];
   const pagination = data?.me?.credentials?.pagination;
-
 
   const credentialPage = (cred: any) => {
     router.push({
@@ -84,7 +83,7 @@ export default function HomeScreen() {
     });
   };
 
-  if(loading)
+  if(loading && !data)
     return <SplashScreen/>
 
   return (

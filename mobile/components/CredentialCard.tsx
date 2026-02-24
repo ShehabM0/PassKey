@@ -1,21 +1,25 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/components/common/colors';
+import Svg, { Path } from 'react-native-svg';
 
 type Credential = {
   platformTitle: string;
+  platformIcon: string;
   slug?: string;
   email: string;
   password?: string;
   onPress: () => void
 };
 
-export default function CredentialCard({ platformTitle, email, onPress }: Credential) {
+export default function CredentialCard({ platformTitle, platformIcon, email, onPress }: Credential) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.card}>
       <View style={styles.leftColumn}>
         <View style={styles.iconContainer}>
-          <MaterialIcons name="facebook" size={40} color={'blue'} />
+          <Svg width={24} height={24} viewBox="0 0 24 24" >
+            <Path d={platformIcon} fill="#000" />
+          </Svg>
         </View>
       </View>
 
