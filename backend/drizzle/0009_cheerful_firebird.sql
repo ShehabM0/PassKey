@@ -1,0 +1,1 @@
+ALTER TABLE "credentials" ADD COLUMN "platform_color" varchar(255) NOT NULL;

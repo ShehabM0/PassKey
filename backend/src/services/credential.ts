@@ -12,6 +12,7 @@ const createCredential = async(credential: Credential) => {
         uid: credential.uid,
         platformIcon: credential.platformIcon,
         platformTitle: credential.platformTitle,
+        platformColor: credential.platformColor,
         email: credential.email,
         password: credential.password
       })
@@ -63,7 +64,6 @@ const getUserCredentials = async(uid: number, pagination?: PaginationParams) => 
 
 const deleteCredential = async(credentialId: number, uid: number) => {
   try {
-    console.log(uid)
     const [credential] = await db
     .select()
     .from(credentials)

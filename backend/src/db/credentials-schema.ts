@@ -6,6 +6,7 @@ export const credentials = pgTable('credentials', {
   uid: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade'}),
   platformIcon: text('platform_icon').notNull(),
   platformTitle: varchar('platform_title', { length: 255 }).notNull(),
+  platformColor: varchar('platform_color', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull(),
   password: text('password').notNull(),
   created_at: timestamp().defaultNow().notNull(),
@@ -19,6 +20,7 @@ export type Credential = {
   uid: number;
   platformIcon: string;
   platformTitle: string;
+  platformColor: string;
   email: string;
   password: string;
   created_at?: Date;

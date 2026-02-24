@@ -1,4 +1,3 @@
-import { useMutation } from '@apollo/client/react';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { CREATE_CREDENTIAL } from '@/api/graphql/mutations';
 import SuccessMessage from '@/components/SuccessMessage';
@@ -6,6 +5,8 @@ import PlatfromPicker from '@/components/PlatformPicker';
 import CreatePageHeader from '@/components/PageHeader';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useMutation } from '@apollo/client/react';
+import Svg, { Path } from 'react-native-svg';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -19,12 +20,12 @@ import {
   Text,
   View,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
 
 interface PlatformDAO{
   id: number;
   name: string;
   path: string;
+  color: string;
 }
 
 export default function CreateCredential() {
@@ -75,6 +76,7 @@ export default function CreateCredential() {
   }
 
   const platformSelect = (platform: any) => {
+    console.log(platform)
     setPlatform(platform);
   };
 
@@ -99,7 +101,7 @@ export default function CreateCredential() {
           { platform ? (
               <TouchableOpacity style={styles.platformInputContainer} onPress={openPlatformPicker} disabled={isLoading}>
                 <Svg width={24} height={24} viewBox="0 0 24 24" >
-                  <Path d={platform?.path} fill="#000" />
+                  <Path d={platform?.path} fill={`#${platform.color}`} />
                 </Svg>
                 <Text style={styles.platformInputText}>{platform.name}</Text>
                 <MaterialIcons name="edit" size={18} color={Colors.black} />

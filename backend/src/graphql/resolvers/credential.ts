@@ -37,6 +37,7 @@ const credentialResolvers = {
           uid: uid,
           platformIcon: platform.path,
           platformTitle: platform.name,
+          platformColor: platform.color,
           email: email,
           password: encryptedPass
         }

@@ -6,19 +6,20 @@ import Svg, { Path } from 'react-native-svg';
 type Credential = {
   platformTitle: string;
   platformIcon: string;
+  platformColor: string;
   slug?: string;
   email: string;
   password?: string;
   onPress: () => void
 };
 
-export default function CredentialCard({ platformTitle, platformIcon, email, onPress }: Credential) {
+export default function CredentialCard({ platformTitle, platformIcon, platformColor, email, onPress }: Credential) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.card}>
       <View style={styles.leftColumn}>
         <View style={styles.iconContainer}>
           <Svg width={24} height={24} viewBox="0 0 24 24" >
-            <Path d={platformIcon} fill="#000" />
+            <Path d={platformIcon} fill={`#${platformColor}`} />
           </Svg>
         </View>
       </View>

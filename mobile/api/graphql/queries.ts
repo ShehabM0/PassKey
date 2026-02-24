@@ -18,6 +18,7 @@ export const GET_USER_CREDENTIALS = gql`
           id
           platformIcon
           platformTitle
+          platformColor
           email
           password
           created_at
@@ -45,6 +46,7 @@ export const GET_PLATFORMS = gql`
           slug
           name
           path
+          color
           aliases
         }
         pagination {

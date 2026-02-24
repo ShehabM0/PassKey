@@ -2,6 +2,7 @@ export interface Credential {
   id: string;
   platformIcon: string;
   platformTitle: string;
+  platformColor: string;
   email: string;
   password: string;
   created_at: string;

@@ -7,7 +7,7 @@ export default function PlatformRow({ item, onPress }: any) {
     <TouchableOpacity style={styles.row} onPress={() => onPress(item)}>
       <View style={styles.iconContainer}>
         <Svg width={20} height={20} viewBox="0 0 24 24" >
-          <Path d={item.path} fill="#000" />
+          <Path d={item.path} fill={`#${item.color}`} />
         </Svg>
       </View>
 

@@ -17,6 +17,7 @@ export const typeDefs = gql`
     id: ID!
     platformIcon: String!
     platformTitle: String!
+    platformColor: String!
     email: String!
     password: String!
     created_at: String!
@@ -42,6 +43,7 @@ export const typeDefs = gql`
     slug: String!
     name: String!
     path: String!
+    color: String!
     aliases: [String]
   }
 

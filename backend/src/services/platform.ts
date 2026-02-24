@@ -6,6 +6,7 @@ type Platform = {
   slug: string
   name: string
   path: string
+  color: string
   aliases: string[]
 }
 
@@ -20,6 +21,7 @@ class managePlatform {
       slug: icon.slug,
       name: icon.title,
       path: icon.path,
+      color: icon.hex,
       aliases: icon.aliases || []
     }))
 

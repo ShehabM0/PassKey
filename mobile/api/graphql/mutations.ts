@@ -14,6 +14,7 @@ export const CREATE_CREDENTIAL = gql`
       id
       platformIcon
       platformTitle
+      platformColor
       email
       password
       created_at
@@ -38,6 +39,7 @@ export const UPDATE_CREDENTIAL = gql`
       id
       platformIcon
       platformTitle
+      platformColor
       email
       password
       created_at
