@@ -49,7 +49,7 @@ const sendVerification = async(req: Request, res: Response) => {
   }
 }
 
-const vefrifyEmail = async(req: Request, res: Response) => {
+const verifyEmail = async(req: Request, res: Response) => {
   const { token } = req.params
   const id = req.userId;
   try {
@@ -183,10 +183,10 @@ const updatePassword = async(req: Request, res: Response) => {
   if(!confirmPass)
     return res.status(401).json({ message: "Current password is incorrect, please try again!" })
 
+  const token = manageAccessToken.sign(uid)
   const newHashedPass = await hashStr(newPassword)
   await redis.setex('password-update:${uid}:${token}', 15 * 60, newHashedPass)
 
-  const token = manageAccessToken.sign(uid)
   const emailData: EmailDAO = {
     to: user.email,
     subject: "Password update",
@@ -223,9 +223,26 @@ const verifyUpdatePassword = async(req: Request, res: Response) => {
   return res.status(200).json({ message: "Your password has been updated successfully.", data: newHashedPass })
 }
 
+
+const verifyPassword = async(req: Request, res: Response) => {
+  const { password } = req.body
+  const uid = req.userId
+
+  if(!uid)
+    return res.status(400).json({ message: "Failed to get user id!" })
+
+  const user = await getUserById(uid)
+  const confirmPass = await compareHash(password, user.password)
+
+  return confirmPass ?
+    res.status(200).json({ message: "Verified user." }) :
+    res.status(401).json({ message: "Password is incorrect!" })
+}
+
 export {
   currentUser,
-  sendVerification, vefrifyEmail,
+  sendVerification, verifyEmail,
   requestPasswordReset, passwordReset,
-  updatePassword, verifyUpdatePassword 
+  updatePassword, verifyUpdatePassword,
+  verifyPassword
 }

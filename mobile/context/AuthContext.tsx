@@ -37,6 +37,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const refreshed = await authApi.refresh();
         await AsyncStorage.setItem('accessToken', refreshed.accessToken);
         await AsyncStorage.setItem('refreshToken', refreshed.refreshToken);
+        console.log("---------------Refresh-Tokens---------------")
+        console.log(refreshed.accessToken)
+        console.log(refreshed.refreshToken)
+        console.log("---------------######---------------")
 
         const me = await authApi.currentUser();
         setUser(me);

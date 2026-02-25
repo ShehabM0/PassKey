@@ -12,6 +12,7 @@ import {
   Modal,
   Alert,
 } from 'react-native';
+import { userApi } from '@/api/rest/user';
 
 export default function PasswordPIN({ onClose, setVerification }: any) {
   const [password, setPassword] = useState('');
@@ -23,17 +24,25 @@ export default function PasswordPIN({ onClose, setVerification }: any) {
     setshowPassword(!showPassword);
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!password) {
+      Alert.alert('Error', 'Please enter password');
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false)
-      const verify = password === "123";
-      if(verify)
-        setVerification(true)
-      else
-        Alert.alert('Error', 'Invalid password');
-    }, 5000); 
-  }
+    try {
+      await userApi.passwordVerify(password);
+      setVerification(true);
+      setIsLoading(false);
+    } catch (error: any) {
+      const message = error?.response?.data?.message || 
+      error?.response?.data?.error ||
+      error.message;
+      Alert.alert('Password Verification Failed!', message);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -58,10 +67,10 @@ export default function PasswordPIN({ onClose, setVerification }: any) {
               />
               {password && 
               <Ionicons
-                  name={showPassword? "eye" : "eye-off"}
-                  size={24}
-                  color="grey"
-                  onPress={toggleShowPassword}
+                name={showPassword? "eye" : "eye-off"}
+                size={24}
+                color="grey"
+                onPress={toggleShowPassword}
               />}
             </View>
 
