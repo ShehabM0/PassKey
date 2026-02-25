@@ -1,3 +1,4 @@
+import { GET_USER_CREDENTIALS } from '@/api/graphql/queries';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { CREATE_CREDENTIAL } from '@/api/graphql/mutations';
 import SuccessMessage from '@/components/SuccessMessage';
@@ -47,17 +48,26 @@ export default function CreateCredential() {
     }
 
     setIsLoading(true);
+    setSuccess(true);
     try {
-      await createCredential({ variables: {
-        platformTitle: platform?.name,
-        email: email,
-        password: password
-      }});
+      await createCredential({
+        variables: {
+          platformTitle: platform?.name,
+          email,
+          password,
+        },
+        refetchQueries: [
+          {
+            query: GET_USER_CREDENTIALS,
+            variables: { page: 1, limit: 20 },
+          },
+        ],
+        awaitRefetchQueries: true,
+      });
 
-      setSuccess(true);
       setIsLoading(false);
-      setTimeout(() => router.replace('/homepage'), 1500);
-    } catch(error: any) {
+      router.replace('/homepage');
+    } catch (error: any) {
       Alert.alert('Credential Creation Failed!', error.message);
       setIsLoading(false);
     }

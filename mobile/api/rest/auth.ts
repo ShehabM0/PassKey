@@ -25,15 +25,8 @@ export const authApi = {
   },
 
   currentUser : async (): Promise<User> => {
-    // const accessToken = await AsyncStorage.getItem('accessToken');
-    // const requestHeader = {
-    //   headers: {
-    //     Authorization: `Bearer ${accessToken}`,
-    //   },
-    // };
-
     const response = await apiClient.get('/users/me');
-    return response.data;
+    return response.data.user;
   },
 
 

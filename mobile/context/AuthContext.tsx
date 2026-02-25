@@ -17,17 +17,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const accessToken = await AsyncStorage.getItem('accessToken');
       const refreshToken = await AsyncStorage.getItem('refreshToken');
-      const userData = await AsyncStorage.getItem('userData');
 
-      if (accessToken && userData) {
-        setUser(JSON.parse(userData));
+      console.log("---------------Tokens---------------")
+      console.log(accessToken)
+      console.log(refreshToken)
+      console.log("---------------######---------------")
+
+      try {
+        const me = await authApi.currentUser();
+        setUser(me);
+        await AsyncStorage.setItem('userData', JSON.stringify(me));
         return;
-      } 
-    
-      if(!refreshToken) {
-        refresh();
+      } catch (err) {
+        console.warn('Stored access token invalid, attempting refresh...', err);
       }
-      
+
+      // Access token missing or invalid.
+      try {
+        const refreshed = await authApi.refresh();
+        await AsyncStorage.setItem('accessToken', refreshed.accessToken);
+        await AsyncStorage.setItem('refreshToken', refreshed.refreshToken);
+
+        const me = await authApi.currentUser();
+        setUser(me);
+        await AsyncStorage.setItem('userData', JSON.stringify(me));
+      } catch (err) {
+        console.error('Refresh token flow failed:', err);
+        await signout();
+      }
     } catch (error) {
       console.error('Auth check failed:', error);
       await signout();
@@ -74,14 +91,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const refresh = async () => {
-    try {
-      const response = await authApi.refresh();
-
-      await AsyncStorage.setItem('accessToken', response.accessToken);
-      await AsyncStorage.setItem('refreshToken', response.refreshToken);
-    } catch (error) {
-      console.error('Refresh token API call failed:', error);
-    }
+    const response = await authApi.refresh();
+    await AsyncStorage.setItem('accessToken', response.accessToken);
+    await AsyncStorage.setItem('refreshToken', response.refreshToken);
+    return response;
   };
 
   const refreshUser = async () => {
