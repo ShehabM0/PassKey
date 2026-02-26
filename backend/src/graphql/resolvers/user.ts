@@ -1,7 +1,8 @@
-import { getUserCredentials } from '../../services/credential.ts'
+import { getCredential, getUserCredentials } from '../../services/credential.ts'
 import { getUserById } from '../../services/user.ts'
 import type { GraphQLContext } from '../context.ts'
 import { logger } from '../../config/logger.ts'
+import { decrypt } from '../../utils/encrypt.ts'
 
 type UserParent = {
   id: string
@@ -26,6 +27,24 @@ const userResolvers = {
         logger.error(message)
         throw new Error(message)
       }
+    },
+    revealCredentialPassword: async (_: unknown, args: { id: number }, context: GraphQLContext) => {
+      if (!context.uid)
+        throw new Error('Authentication required!')
+
+      try {
+        const credential = await getCredential(args.id)
+        if(!credential)
+          throw new Error("Credential doesn't exist!")
+
+        const password = credential.password
+        return decrypt(password)
+      } catch (e) {
+        const message = e instanceof Error ? e.message : 'Error fetching credential password!'
+        logger.error('Error fetching credential password!', e)
+        throw new Error(message)
+      }
+
     }
   },
   User: {

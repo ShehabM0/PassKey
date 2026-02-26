@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client/core';
 
-const GET_USER = gql`
+export const GET_USER = gql`
   query Me {
     me {
       id
@@ -20,7 +20,6 @@ export const GET_USER_CREDENTIALS = gql`
           platformTitle
           platformColor
           email
-          password
           created_at
           updated_at
         }
@@ -34,6 +33,12 @@ export const GET_USER_CREDENTIALS = gql`
         }
       }
     }
+  }
+`;
+
+export const GET_CREDENTIAL_PASSWORD = gql`
+  query GetCredentialPassword($id: String!) {
+    revealCredentialPassword(id: $id)
   }
 `;
 

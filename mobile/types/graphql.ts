@@ -4,7 +4,6 @@ export interface Credential {
   platformTitle: string;
   platformColor: string;
   email: string;
-  password: string;
   created_at: string;
   updated_at: string;
 }
@@ -26,6 +25,12 @@ export interface CredentialsResponse {
 export interface GetUserCredentialsData {
   me: {
     credentials: CredentialsResponse;
+  };
+}
+
+export interface GetCredentialPasswordData {
+  revealCredentialPassword: {
+    revealCredentialPassword: string;
   };
 }
 

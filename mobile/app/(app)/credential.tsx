@@ -1,18 +1,16 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import SuccessMessage from '@/components/SuccessMessage';
-import CredentialCard from '@/components/CredentialCard';
 import CreatePageHeader from '@/components/PageHeader';
 import PasswordPIN from '@/components/PopUpPassword';
 import PopupMessage from '@/components/PopUpMessage';
 import { Colors } from '@/components/common/colors';
 import { useLocalSearchParams } from 'expo-router';
+import SuccessMessage from '@/components/SuccessMessage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
-import { DATA } from '@/components/common/data';
+import Svg, { Path } from 'react-native-svg';
 import { useEffect, useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
 import { CredentialDAO } from '@/types';
-import { router } from 'expo-router';
 import {
   ActivityIndicator,
   TouchableOpacity,
@@ -25,18 +23,24 @@ import {
 } from 'react-native';
 
 export default function CredentialPage() {
-  const params = useLocalSearchParams<{ name?: string, email?: string; password?: string; }>();
+  const params = useLocalSearchParams<{
+    id: string,
+    platformIcon: string,
+    platformTitle: string,
+    platformColor: string,
+    email: string;
+  }>();
 
-  const credentialPage = (cred: any) => {
-    router.push({
-      pathname: '/credential',
-      params: cred
-    });
-  }
+  // const credentialPage = (cred: any) => {
+  //   router.push({
+  //     pathname: '/credential',
+  //     params: cred
+  //   });
+  // }
 
   const credential: CredentialDAO = {
     email: params.email ?? '',
-    password: params.password ?? '',
+    password: '•••••••••••'
   };
 
   const [email, setEmail] = useState(credential.email)
@@ -117,15 +121,19 @@ export default function CredentialPage() {
         <PopupMessage message='Copied to clipboard.'/> }
 
       { PIN &&
-        <PasswordPIN onClose={showPIN} setVerification={setVerification}/>
+        <PasswordPIN credentialId={params.id} onClose={showPIN} setVerification={setVerification} setPassword={setPassword}/>
       }
       
       <ScrollView style={styles.content}>
 
         {/* Platform */}
         <View style={styles.platformContainer}>
-          <MaterialIcons name='code' size={40} color={Colors.black} style={{marginRight: 10}}/>
-          <Text style={styles.title}>{params.name}</Text>
+          <View style={styles.iconContainer}>
+            <Svg width={30} height={30} viewBox="0 0 24 24" >
+              <Path d={params.platformIcon} fill={`#${params.platformColor}`} />
+            </Svg>
+          </View>
+          <Text style={styles.title}>{params.platformTitle}</Text>
         </View>
 
         {/* Credential details & form */}
@@ -211,7 +219,14 @@ export default function CredentialPage() {
 
         {/* Credetnial history */}
         <View style={styles.credentialsContainer}>
-        {
+              <View style={styles.nocredentialsContainer}>
+                <Text style={styles.emptyTitle}>No credential history</Text>
+                <Text style={styles.emptySubtitle}>
+                  Changes to this credential will appear here
+                </Text>
+              </View>
+        </View>
+        {/* {
             DATA? (
               DATA.map((item) => (
                 <View key={item.id}>
@@ -226,9 +241,7 @@ export default function CredentialPage() {
                 </Text>
               </View>
             )
-        }
-        </View>
-
+        } */}
       </ScrollView>
     </View>
   );
@@ -259,6 +272,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20
+  },
+
+  iconContainer: {
+    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   form: {

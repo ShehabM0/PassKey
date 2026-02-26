@@ -1,15 +1,14 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/components/common/colors';
 import Svg, { Path } from 'react-native-svg';
 
 type Credential = {
+  id: string;
   platformTitle: string;
   platformIcon: string;
   platformColor: string;
   slug?: string;
   email: string;
-  password?: string;
   onPress: () => void
 };
 

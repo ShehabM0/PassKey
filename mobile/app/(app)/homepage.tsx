@@ -24,12 +24,10 @@ export default function HomeScreen() {
       }
     );
   
-    console.log(error)
-  
   const credentials = data?.me?.credentials?.data || [];
   const pagination = data?.me?.credentials?.pagination;
 
-  const credentialPage = (cred: any) => {
+  const credentialPageNav = (cred: any) => {
     router.push({
       pathname: '/credential',
       params: cred
@@ -99,7 +97,7 @@ export default function HomeScreen() {
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ padding: 20 }}
             renderItem={({ item }) => (
-              <CredentialCard {...item} onPress={() => credentialPage(item)}  />
+              <CredentialCard {...item} onPress={() => credentialPageNav(item)}  />
             )}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.5}

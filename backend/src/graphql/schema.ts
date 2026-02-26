@@ -19,7 +19,6 @@ export const typeDefs = gql`
     platformTitle: String!
     platformColor: String!
     email: String!
-    password: String!
     created_at: String!
     updated_at: String!
   }
@@ -67,6 +66,7 @@ export const typeDefs = gql`
   type Query {
     me: User
     platform: Platform!
+    revealCredentialPassword(id: String!): String!
   }
 
   type Mutation {

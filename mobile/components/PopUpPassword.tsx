@@ -1,6 +1,10 @@
+import { GET_CREDENTIAL_PASSWORD } from '@/api/graphql/queries';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { GetCredentialPasswordData } from '@/types/graphql';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useQuery } from '@apollo/client/react';
+import { userApi } from '@/api/rest/user';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -12,10 +16,19 @@ import {
   Modal,
   Alert,
 } from 'react-native';
-import { userApi } from '@/api/rest/user';
 
-export default function PasswordPIN({ onClose, setVerification }: any) {
-  const [password, setPassword] = useState('');
+export default function PasswordPIN({ credentialId, onClose, setVerification, setPassword }: any) {
+  const [pin, setPin] = useState('');
+
+  const { data, loading } = useQuery<GetCredentialPasswordData>
+    (
+      GET_CREDENTIAL_PASSWORD,
+      {
+        variables: { id: credentialId },
+      }
+    );
+  
+  const password = data?.revealCredentialPassword;
 
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setshowPassword] = useState(false);
@@ -25,16 +38,19 @@ export default function PasswordPIN({ onClose, setVerification }: any) {
   }
 
   const handleSubmit = async () => {
-    if (!password) {
+    if (!pin) {
       Alert.alert('Error', 'Please enter password');
       return;
     }
 
     setIsLoading(true);
     try {
-      await userApi.passwordVerify(password);
-      setVerification(true);
-      setIsLoading(false);
+      await userApi.passwordVerify(pin);
+      if(!loading) {
+        setPassword(password);
+        setVerification(true);
+        setIsLoading(false);
+      }
     } catch (error: any) {
       const message = error?.response?.data?.message || 
       error?.response?.data?.error ||
@@ -45,51 +61,49 @@ export default function PasswordPIN({ onClose, setVerification }: any) {
   };
 
   return (
-    <>
-      <Modal visible={true} transparent animationType="slide">
-        <TouchableOpacity activeOpacity={1} onPress={()=> onClose()} style={styles.overlay}>
-          <TouchableOpacity activeOpacity={1} style={styles.sheet}>
+    <Modal visible={true} transparent animationType="slide">
+      <TouchableOpacity activeOpacity={1} onPress={()=> onClose()} style={styles.overlay}>
+        <TouchableOpacity activeOpacity={1} style={styles.sheet}>
 
-            <Text style={styles.title}>Account verification</Text>
-            <Text style={styles.subtitle}>Enter account password</Text>
+          <Text style={styles.title}>Account verification</Text>
+          <Text style={styles.subtitle}>Enter account password</Text>
 
-            {/* Password */}
-            <View style={styles.inputContainer}>
-              <MaterialIcons name="lock" size={24} color="black" />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                editable={!isLoading}
-                autoFocus
-              />
-              {password && 
-              <Ionicons
-                name={showPassword? "eye" : "eye-off"}
-                size={24}
-                color="grey"
-                onPress={toggleShowPassword}
-              />}
-            </View>
+          {/* Password */}
+          <View style={styles.inputContainer}>
+            <MaterialIcons name="lock" size={24} color="black" />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={pin}
+              onChangeText={setPin}
+              secureTextEntry={!showPassword}
+              editable={!isLoading}
+              autoFocus
+            />
+            {pin && 
+            <Ionicons
+              name={showPassword? "eye" : "eye-off"}
+              size={24}
+              color="grey"
+              onPress={toggleShowPassword}
+            />}
+          </View>
 
-            <TouchableOpacity
-              style={[styles.button, isLoading && styles.buttonDisabled]}
-              onPress={handleSubmit}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color={Colors.white} />
-              ) : (
-                <Text style={styles.buttonText}>Submit</Text>
-              )}
-            </TouchableOpacity>
-
+          <TouchableOpacity
+            style={[styles.button, isLoading && styles.buttonDisabled]}
+            onPress={handleSubmit}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color={Colors.white} />
+            ) : (
+              <Text style={styles.buttonText}>Submit</Text>
+            )}
           </TouchableOpacity>
+
         </TouchableOpacity>
-      </Modal>
-    </>
+      </TouchableOpacity>
+    </Modal>
   );
 }
 
