@@ -22,6 +22,9 @@ export interface CredentialsResponse {
   pagination: Pagination;
 }
 
+export interface GetRelatedCredentialsData {
+  relatedCredentials: CredentialsResponse;
+}
 export interface GetUserCredentialsData {
   me: {
     credentials: CredentialsResponse;

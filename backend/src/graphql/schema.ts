@@ -66,6 +66,7 @@ export const typeDefs = gql`
   type Query {
     me: User
     platform: Platform!
+    relatedCredentials(id: Int!, page: Int, limit: Int): CredentialConnection!
     revealCredentialPassword(id: String!): String!
   }
 

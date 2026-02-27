@@ -108,8 +108,11 @@ export default function CreateCredential() {
         <Text style={styles.title}>Add a new credential</Text>
 
         <View style={styles.form}>
+          {/* Platform */}
           { platform ? (
-              <TouchableOpacity style={styles.platformInputContainer} onPress={openPlatformPicker} disabled={isLoading}>
+              <TouchableOpacity style={[styles.platformInputContainer,
+                {shadowColor: `#${platform.color}`}]} onPress={openPlatformPicker} disabled={isLoading}>
+    
                 <Svg width={24} height={24} viewBox="0 0 24 24" >
                   <Path d={platform?.path} fill={`#${platform.color}`} />
                 </Svg>
@@ -124,6 +127,7 @@ export default function CreateCredential() {
             )
           }
 
+          {/* email */}
           <View style={styles.inputContainer}>
             <MaterialIcons name="email" size={24} color="black" />
             <TextInput
@@ -137,6 +141,7 @@ export default function CreateCredential() {
             />
           </View>
 
+          {/* password */}
           <View style={styles.inputContainer}>
             <MaterialIcons name="lock" size={24} color="black" />
             <TextInput
@@ -156,6 +161,7 @@ export default function CreateCredential() {
             />}
           </View>
 
+          {/* Button */}
           <TouchableOpacity
             style={[styles.button, isLoading && styles.buttonDisabled]}
             onPress={handleSubmit}
@@ -215,6 +221,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 20,
+
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 10,
   },
   platformInputText: {
     fontSize: 22,

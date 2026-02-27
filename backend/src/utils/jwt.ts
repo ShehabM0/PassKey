@@ -6,7 +6,7 @@ const manageAccessToken = {
     if(!userId)
       throw new Error('Authentication failed!')
     try {
-      return jwt.sign({ uid: userId }, process.env.ACCESS_TOKEN!, { expiresIn: "15m" })
+      return jwt.sign({ uid: userId }, process.env.ACCESS_TOKEN!, { expiresIn: "2h" })
     } catch (e) {
       logger.error('Authentication failed!', e)
       throw new Error('Authentication failed!')

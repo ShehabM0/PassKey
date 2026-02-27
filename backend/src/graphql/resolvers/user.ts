@@ -1,4 +1,4 @@
-import { getCredential, getUserCredentials } from '../../services/credential.ts'
+import { getCredential, getRelatedCredentials, getUserCredentials } from '../../services/credential.ts'
 import { getUserById } from '../../services/user.ts'
 import type { GraphQLContext } from '../context.ts'
 import { logger } from '../../config/logger.ts'
@@ -25,6 +25,29 @@ const userResolvers = {
       } catch (e) {
         const message = e instanceof Error ? e.message : 'Error fetching user!'
         logger.error(message)
+        throw new Error(message)
+      }
+    },
+    relatedCredentials: async (_: unknown, args: { id: number, page?: number, limit?: number }, context: GraphQLContext) => {
+      const uid = context.uid;
+      if (!uid)
+        throw new Error('Authentication required!')
+
+      try {
+        const userCredentials = await getRelatedCredentials(uid, args.id, { page: args.page, limit: args.limit })
+        
+        const credentials = userCredentials.data
+        const pagination = userCredentials.pagination
+        const data = credentials.map((credential) => ({
+          ...credential,
+          created_at: credential.created_at?.toISOString(), // Date -> string
+          updated_at: credential.updated_at?.toISOString(),
+        }))
+
+        return { data, pagination }
+      } catch (e) {
+        const message = e instanceof Error ? e.message : 'Error fetching credentials!'
+        logger.error('Error getting related credentials!', e)
         throw new Error(message)
       }
     },

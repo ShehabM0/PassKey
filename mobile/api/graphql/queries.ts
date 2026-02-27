@@ -36,6 +36,31 @@ export const GET_USER_CREDENTIALS = gql`
   }
 `;
 
+export const GET_RELATED_CREDENTIALS = gql`
+  query GetRelatedCredentials($id: Int!, $page: Int!, $limit: Int!) {
+    relatedCredentials(id: $id, page: $page, limit: $limit) {
+      data {
+        id
+        platformIcon
+        platformTitle
+        platformColor
+        email
+        created_at
+        updated_at
+      }
+      pagination {
+        currentPage
+        pageSize
+        totalItems
+        totalPages
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+
 export const GET_CREDENTIAL_PASSWORD = gql`
   query GetCredentialPassword($id: String!) {
     revealCredentialPassword(id: $id)

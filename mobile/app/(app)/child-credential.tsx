@@ -1,27 +1,21 @@
-import { GET_RELATED_CREDENTIALS } from '@/api/graphql/queries';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { GetRelatedCredentialsData } from '@/types/graphql';
-import { router, useLocalSearchParams } from 'expo-router';
 import SuccessMessage from '@/components/SuccessMessage';
-import CredentialCard from '@/components/CredentialCard';
 import CreatePageHeader from '@/components/PageHeader';
 import PasswordPIN from '@/components/PopUpPassword';
 import PopupMessage from '@/components/PopUpMessage';
 import { Colors } from '@/components/common/colors';
+import {  useLocalSearchParams } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
-import { useQuery } from '@apollo/client/react';
 import Svg, { Path } from 'react-native-svg';
 import { useEffect, useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
 import { CredentialDAO } from '@/types';
 import {
-  ActivityIndicator,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   TextInput,
-  Alert,
   Text,
   View,
 } from 'react-native';
@@ -33,26 +27,9 @@ export default function CredentialPage() {
     platformTitle: string,
     platformColor: string,
     email: string;
+    created_at: string;
+    updated_at: string;
   }>();
-
-  const limit = 20;
-  const page = 1;
-  const { data, loading, fetchMore } = useQuery<GetRelatedCredentialsData> (
-      GET_RELATED_CREDENTIALS,
-      {
-        variables: { id: Number(params.id), page, limit },
-      }
-    );
-  
-  const credentials = data?.relatedCredentials?.data || [];
-  const pagination = data?.relatedCredentials?.pagination;
-
-  const credentialPageNav = (cred: any) => {
-    router.push({
-      pathname: '/child-credential',
-      params: cred
-    });
-  }
 
   const credential: CredentialDAO = {
     email: params.email ?? '',
@@ -66,7 +43,6 @@ export default function CredentialPage() {
   const [PIN, setPIN] = useState(false);
   const [verify, setVerification] = useState(false);
 
-  const [edit, setEdit] = useState(false);
   const [popup, setPopup] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,25 +51,6 @@ export default function CredentialPage() {
     if(verify)
       showPIN(false);
   }, [verify]);
-
-  const onSaveEdit = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-
-    setSuccess(true);
-    setIsLoading(true);
-    setTimeout(() => {
-      setSuccess(false);
-      setIsLoading(false);
-      setEdit(false);
-    }, 3000); 
-  };
-
-  const onEdit = () => {
-    setEdit(true);
-  }
 
   const onCopy = async (text: string) => {
     await Clipboard.setStringAsync(text);
@@ -126,37 +83,21 @@ export default function CredentialPage() {
         showPIN(true);
   }
 
-  const handleLoadMore = () => {
-    if (!pagination?.hasNextPage || loading) return;
+  const formatDate = (iso?: string) => {
+    if (!iso) return '';
 
-    fetchMore({
-      variables: {
-        page: pagination.currentPage + 1,
-        limit
-      },
-      updateQuery: (prev: any, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return prev;
-
-        return {
-          relatedCredentials: {
-            ...fetchMoreResult.relatedCredentials,
-            data: [
-              ...prev.relatedCredentials.data,
-              ...fetchMoreResult.relatedCredentials.data,
-            ],
-          },
-        };
-      },
+    return new Date(iso).toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
     });
   };
-
 
   return (
     <View style={styles.container} >
       <CreatePageHeader color={Colors.white} />
 
       { success &&
-        <SuccessMessage message='Your credential has been edited'/> }
+        <SuccessMessage message='Your credential has been deleted'/> }
 
       { popup &&
         <PopupMessage message='Copied to clipboard.'/> }
@@ -189,7 +130,7 @@ export default function CredentialPage() {
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
-              editable={edit}
+              editable={false}
             />
             <MaterialIcons name="content-copy" size={24} color="black" onPress={onCopyEmail} />
           </View>
@@ -202,7 +143,7 @@ export default function CredentialPage() {
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
-              editable={edit}
+              editable={false}
             />
             <Ionicons
                 name={showPassword? "eye" : "eye-off"}
@@ -215,74 +156,36 @@ export default function CredentialPage() {
           </View>
 
           {/* Buttons */}
-          {
-            !edit ? (
-              <View style={styles.buttonsContainer}>
-                <TouchableOpacity
-                  style={[styles.button, styles.editButton, isLoading && styles.buttonDisabled]}
-                  onPress={onEdit}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator color={Colors.white} />
-                  ) : (
-                    <Text style={styles.buttonText}>Edit</Text>
-                  )}
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, styles.deleteButton, isLoading && styles.buttonDisabled]}
-                  onPress={onEdit}
-                  disabled={isLoading}
-                >
-                  <Feather name="trash" size={18} color="black" />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <TouchableOpacity
-                style={[styles.button, isLoading && styles.buttonDisabled]}
-                onPress={onSaveEdit}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color={Colors.white} />
-                ) : (
-                  <Text style={styles.buttonText}>Save</Text>
-                )}
-              </TouchableOpacity>
-            )
-          }
+          <View>
+            <TouchableOpacity
+              style={[styles.button, styles.deleteButton, isLoading && styles.buttonDisabled]}
+              disabled={isLoading}
+            >
+              <Feather name="trash" size={18} color="black" />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Horzinotal line */}
-        <View style={styles.horzLineContainer}>
-          <View style={styles.horzLine}/>
-        </View>
-
-        {/* Credetnial history */}
-        {
-          credentials?.length ? (
-            <>
-            {credentials.map((item) => (
-              <View key={item.id}>
-                <CredentialCard {...item} onPress={() => credentialPageNav(item)}  />
-              </View>
-            ))}
-
-            {pagination?.hasNextPage && (
-              <TouchableOpacity style={styles.loadMoreBtn} onPress={handleLoadMore} >
-                <Text style={styles.loadMoreTxt}>Load more</Text>
-              </TouchableOpacity>
-            )}
-            </>
-          ) : (
-            <View style={styles.nocredentialsContainer}>
-              <Text style={styles.emptyTitle}>No credential history</Text>
-              <Text style={styles.emptySubtitle}>
-                Changes to this credential will appear here
-              </Text>
+        {/* Timestamps */}
+        <View style={styles.metaCard}>
+          <View style={styles.metaRow}>
+            <MaterialIcons name="schedule" size={18} color={Colors.gray500} />
+            <View style={styles.metaTextContainer}>
+              <Text style={styles.metaLabel}>Created</Text>
+              <Text style={styles.metaValue}>{formatDate(params.created_at)}</Text>
             </View>
-          )
-        }
+          </View>
+
+          <View style={styles.metaDivider} />
+
+          <View style={styles.metaRow}>
+            <MaterialIcons name="update" size={18} color={Colors.gray500} />
+            <View style={styles.metaTextContainer}>
+              <Text style={styles.metaLabel}>Last updated</Text>
+              <Text style={styles.metaValue}>{formatDate(params.updated_at)}</Text>
+            </View>
+          </View>
+      </View>
       </ScrollView>
     </View>
   );
@@ -346,7 +249,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
-    marginTop: 8,
   },
 
   buttonDisabled: {
@@ -359,67 +261,41 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  editButton: {
-    width: '75%',
-  },
-
   deleteButton: {
-    width: '20%',
     backgroundColor: Colors.red
   },
 
-  buttonsContainer: {
+  metaCard: {
+    backgroundColor: Colors.gray100,
+    borderRadius: 12,
+    padding: 14,
+    marginTop: 20,
+  },
+
+  metaRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-
-  horzLineContainer: {
     alignItems: 'center',
-    justifyContent: 'center'
   },
 
-  horzLine: {
-    backgroundColor: Colors.gray500,
-    marginVertical: 20,
-    height: 1,
-    width: '80%',
+  metaTextContainer: {
+    marginLeft: 10,
   },
 
-  credentialsContainer: {
-    marginBottom: 50
-  },
-
-  loadMoreBtn: {
-    backgroundColor: Colors.gray200,
-    padding: 5,
-    borderRadius: 8,
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-
-  loadMoreTxt: {
-    color: Colors.gray700,
-    fontWeight: '600',
-  },
-
-  nocredentialsContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20
-  },
-
-  emptyTitle: {
-    marginTop: 12,
-    fontSize: 18,
-    fontWeight: '600',
-    color: Colors.gray700,
-  },
-
-  emptySubtitle: {
-    marginTop: 4,
-    fontSize: 14,
+  metaLabel: {
+    fontSize: 12,
     color: Colors.gray500,
-    textAlign: 'center',
+    fontWeight: '500',
+  },
+
+  metaValue: {
+    fontSize: 14,
+    color: Colors.gray900,
+    fontWeight: '600',
+  },
+
+  metaDivider: {
+    height: 1,
+    backgroundColor: Colors.gray200,
+    marginVertical: 10,
   },
 });
-

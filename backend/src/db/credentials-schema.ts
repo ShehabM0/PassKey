@@ -15,6 +15,17 @@ export const credentials = pgTable('credentials', {
   TitleIdx: index('title_idx').on(table.platformTitle),
 }));
 
+export type CredentialDAO = {
+  id: number;
+  uid: number;
+  platformIcon: string;
+  platformTitle: string;
+  platformColor: string;
+  email: string;
+  created_at?: Date;
+  updated_at?: Date
+}
+
 export type Credential = {
   id?: number;
   uid: number;

@@ -7,13 +7,12 @@ import { Colors } from '@/components/common/colors';
 import HomeHeader from '@/components/HomeHeader';
 import { useQuery } from '@apollo/client/react';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
 
 export default function HomeScreen() {
   const router = useRouter();
   const limit = 20;
+  const page = 1;
 
-  const [page, setPage] = useState(1);
   const { data, loading, error, fetchMore } = useQuery<
     GetUserCredentialsData,
     PaginationVars>
@@ -97,7 +96,7 @@ export default function HomeScreen() {
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ padding: 20 }}
             renderItem={({ item }) => (
-              <CredentialCard {...item} onPress={() => credentialPageNav(item)}  />
+              <CredentialCard {...item} updated_at={undefined} onPress={() => credentialPageNav(item)}  />
             )}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.5}

@@ -1,8 +1,9 @@
 import type { PaginationParams, PaginatedResult } from '../db/pagination.ts'
-import { credentials, type Credential } from '../db/credentials-schema.ts'
+import { type CredentialDAO, credentials, type Credential } from '../db/credentials-schema.ts'
+import { eq, desc, countDistinct, and, max, ne, getTableColumns } from 'drizzle-orm'
 import { db } from '../config/db-connection.ts'
 import { logger } from '../config/logger.ts'
-import { eq, desc, and } from 'drizzle-orm'
+import { realtimeTopic } from 'drizzle-orm/supabase'
 
 const createCredential = async(credential: Credential) => {
   try {
@@ -26,30 +27,124 @@ const createCredential = async(credential: Credential) => {
   }
 }
 
+const getCredential = async(credentialId: number) => {
+  try {
+    const [credential] = await db
+    .select()
+    .from(credentials)
+    .where(eq(credentials.id, credentialId))
+
+    return credential
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Error finding credential!'
+    throw new Error(message)
+  }
+}
+
+const getRelatedCredentials = async(uid: number, id: number, pagination?: PaginationParams) => {
+  const page = (pagination?.page && pagination.page > 0) ? pagination.page : 1
+  const limit = (pagination?.limit && pagination.limit > 0) ? pagination.limit : 10
+  const offset = (page - 1) * limit
+
+  try {
+    const platformTitleSubquery = db
+      .select({ platformTitle: credentials.platformTitle })
+      .from(credentials)
+      .where(and(eq(credentials.id, id), eq(credentials.uid, uid)))
+      .limit(1);
+
+    const totalItems = await db.$count(
+      credentials,
+      and(
+        eq(credentials.uid, uid),
+        ne(credentials.id, id),
+        eq(credentials.platformTitle, platformTitleSubquery)
+      )
+    );
+
+    const { password, ...columns } = getTableColumns(credentials);
+    const relatedCredentials = await db
+      .select(columns)
+      .from(credentials)
+      .where(and(
+        ne(credentials.id, id),
+        eq(credentials.uid, uid),
+        eq(credentials.platformTitle, platformTitleSubquery)
+      ))
+      .orderBy(desc(credentials.created_at))
+      .limit(limit)
+      .offset(offset)
+    
+    const totalPages = Math.ceil(totalItems / limit)
+    const data: PaginatedResult<CredentialDAO> = {
+      data: relatedCredentials,
+      pagination: {
+        currentPage: page,
+        pageSize: limit,
+        totalItems: totalItems,
+        totalPages: totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1
+      }
+    }
+    return data
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Error fetching user credentials!'
+    throw new Error(message)
+  }
+}
+
+/*
+SELECT * FROM Credentials c1
+JOIN (
+  SELECT platform_title, MAX(created_at) AS max_time
+  FROM Credentials
+  GROUP BY platform_title
+) c2 ON c1.platform_title = c2.platform_title AND c1.created_at = c2.max_time;
+*/
 const getUserCredentials = async(uid: number, pagination?: PaginationParams) => {
   const page = (pagination?.page && pagination.page > 0) ? pagination.page : 1
   const limit = (pagination?.limit && pagination.limit > 0) ? pagination.limit : 10
   const offset = (page - 1) * limit
 
   try {
-    const totalUserCredentials = await db.$count(credentials, eq(credentials.uid, uid))
+    const totalUserCredentials = await db
+      .select({ count: countDistinct(credentials.platformTitle) })
+      .from(credentials)
+      .where(eq(credentials.uid, uid))
+      const totalItems: number = totalUserCredentials?.[0]?.count ?? 0;
 
-    const userCredentials = await db
-    .select()
-    .from(credentials)
-    .where(eq(credentials.uid, uid))
-    .orderBy(desc(credentials.created_at))
-    .limit(limit)
-    .offset(offset)
+    const latestPerPlatform = db
+      .select({
+        platformTitle: credentials.platformTitle,
+        maxTime: max(credentials.created_at).as('max_time'),
+      })
+      .from(credentials)
+      .where(eq(credentials.uid, uid))
+      .groupBy(credentials.platformTitle)
+      .as('latest')
 
-    const totalPages = Math.ceil(totalUserCredentials / limit)
+    const { password, ...columns } = getTableColumns(credentials);
+    const relatedCredentials = await db
+      .select(columns)
+      .from(credentials)
+      .innerJoin(
+        latestPerPlatform,
+        and(
+          eq(credentials.platformTitle, latestPerPlatform.platformTitle),
+          eq(credentials.created_at, latestPerPlatform.maxTime)
+        )
+      )
+      .limit(limit)
+      .offset(offset)
 
-    const data: PaginatedResult<Credential> = {
-      data: userCredentials,
+    const totalPages = Math.ceil(totalItems / limit)
+    const data: PaginatedResult<CredentialDAO> = {
+      data: relatedCredentials,
       pagination: {
         currentPage: page,
         pageSize: limit,
-        totalItems: totalUserCredentials,
+        totalItems: totalItems,
         totalPages: totalPages,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1
@@ -104,18 +199,4 @@ const updateCredential = async(credential: Credential) => {
   }
 }
 
-const getCredential = async(credentialId: number) => {
-  try {
-    const [credential] = await db
-    .select()
-    .from(credentials)
-    .where(eq(credentials.id, credentialId))
-
-    return credential
-  } catch (e) {
-    const message = e instanceof Error ? e.message : 'Error finding credential!'
-    throw new Error(message)
-  }
-}
-
-export { createCredential, getCredential, getUserCredentials, deleteCredential, updateCredential }
+export { createCredential, getCredential, getRelatedCredentials, getUserCredentials, deleteCredential, updateCredential }
