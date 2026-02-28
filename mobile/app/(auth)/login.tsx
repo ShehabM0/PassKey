@@ -2,7 +2,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   KeyboardAvoidingView,
   ActivityIndicator,
@@ -15,10 +15,14 @@ import {
   View,
 } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
+import SuccessMessage from '@/components/SuccessMessage';
 
 export default function LoginScreen() {
-  const { signin } = useAuth();
+  const params = useLocalSearchParams<{ navSuccessMessage: string }>();
   const router = useRouter();
+
+  const [success, setSuccess] = useState(params?.navSuccessMessage?.length ? true : false);
+  const { signin } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -59,6 +63,10 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      { success &&
+        <SuccessMessage message={params.navSuccessMessage} onClose={() => setSuccess(false)}/>
+      }
+
       <View style={styles.header}>
         <Text style={styles.headTitle}>PassKey<Text style={styles.plus}>+</Text></Text>
       </View>

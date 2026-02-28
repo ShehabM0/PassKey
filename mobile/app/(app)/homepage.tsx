@@ -1,17 +1,22 @@
 import { GetUserCredentialsData, PaginationVars } from '@/types/graphql';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FlatList, View, Text, StyleSheet } from 'react-native';
 import { GET_USER_CREDENTIALS } from '@/api/graphql/queries';
+import SuccessMessage from '@/components/SuccessMessage';
 import CredentialCard from '@/components/CredentialCard';
 import SplashScreen from '@/components/SplashScreen';
 import { Colors } from '@/components/common/colors';
 import HomeHeader from '@/components/HomeHeader';
 import { useQuery } from '@apollo/client/react';
-import { useRouter } from 'expo-router';
+import { useState } from 'react';
 
 export default function HomeScreen() {
+  const params = useLocalSearchParams<{ navSuccessMessage: string }>();
   const router = useRouter();
   const limit = 20;
   const page = 1;
+
+  const [success, setSuccess] = useState(params?.navSuccessMessage?.length ? true : false);
 
   const { data, loading, error, fetchMore } = useQuery<
     GetUserCredentialsData,
@@ -88,6 +93,11 @@ export default function HomeScreen() {
   return (
       <View style={{flex: 1}}>
         <HomeHeader/>
+
+        { success &&
+          <SuccessMessage message={params.navSuccessMessage} onClose={() => setSuccess(false)}/>
+        }
+        
         <View style={styles.bodyContainer}>
           <FlatList
             data={credentials}

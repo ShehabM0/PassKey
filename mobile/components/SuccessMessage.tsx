@@ -1,72 +1,66 @@
 import { Modal, StyleSheet, Text, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Colors } from '@/components/common/colors';
 import { SuccessMessageProps } from '../types';
-import React from 'react';
+import React, { useEffect } from 'react';
 
-export default function SuccessMessage({ message }: SuccessMessageProps) {
+export default function SuccessMessage({ message, onClose }: SuccessMessageProps) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <>
-      <View style={styles.layout}/>
-      <Modal transparent animationType="fade">
-        <View style={styles.centered}>
-          <View style={styles.messageCont}>
-            <FontAwesome name="check-circle" size={40} color="green" />
-            {
-              message && 
-              <Text style={styles.message}>
-                {message}
-              </Text>
-            }
-            {
-              !message &&
-              <Text style={styles.message}>
-                Your request has been done
-              </Text>
-            }
-            <Text style={styles.successMessage}>Successfully</Text>
+    <Modal transparent animationType="slide">
+      <View style={styles.overlay}>
+        <View style={styles.toast}>
+          <View style={styles.iconContainer}>
+            <FontAwesome name="check" size={16} color="#fff" />
           </View>
+
+          <Text style={styles.message} numberOfLines={2}>
+            {message}
+          </Text>
         </View>
-      </Modal>
-    </>
+      </View>
+    </Modal>
   );
 }
-
 const styles = StyleSheet.create({
-  layout: {
-    position: 'absolute',
-    zIndex: 1,
+  overlay: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingBottom: 80,
   },
-  centered: {
-    position: "absolute",
-    zIndex: 1,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 20,
+
+  toast: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.green100,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    borderRadius: 16,
+    minWidth: '85%',
+    elevation: 6,
   },
-  messageCont: {
-    minWidth: '60%',
-    backgroundColor: '#fff',
+
+  iconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#22C55E',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    borderRadius: 15,
+    marginRight: 12,
   },
+
   message: {
-    fontSize: 18,
-    marginTop: 15,
-    textAlign: 'center',
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.gray900,
   },
-  successMessage: {
-    fontSize: 18,
-    color: 'green',
-    fontWeight: 'bold',
-  }
 });

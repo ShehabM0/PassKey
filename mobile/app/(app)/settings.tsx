@@ -34,7 +34,6 @@ export default function SettingsScreen() {
   const verifyEmail = async () => {
     if(user?.email_confirm) {
       setPopup(true);
-      setTimeout(() => setPopup(false), 5000); 
       return;
     }
 
@@ -43,7 +42,6 @@ export default function SettingsScreen() {
         await userApi.emailVerify(token);
         await refreshUser();
         setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000); 
       } catch(error: any) {
         const message = error?.response?.data?.message || 
         error?.response?.data?.error ||
@@ -76,10 +74,18 @@ export default function SettingsScreen() {
       <CreatePageHeader color={Colors.gray100} />
 
       { success &&
-        <SuccessMessage message='Email verified.'/> }
+        <SuccessMessage
+          message='Email verified'
+          onClose={()=> setSuccess(false)}
+        />
+      }
 
       { popup &&
-        <PopupMessage message='Email is already verified.'/> }
+        <PopupMessage 
+          message='Email is already verified'
+          onClose={()=> setPopup(false)}
+        />
+      }
 
       <View style={styles.content}>
         {/* Profile */}

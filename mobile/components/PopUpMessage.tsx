@@ -1,9 +1,16 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { SuccessMessageProps } from '../types';
 import { Colors } from './common/colors';
+import { useEffect } from 'react';
 
+export default function PopupMessage({ message, onClose }: SuccessMessageProps) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
-export default function PopupMessage({ message }: SuccessMessageProps) {
   return (
     <View style={styles.container}>
         <Text style={styles.text}>{message}</Text>

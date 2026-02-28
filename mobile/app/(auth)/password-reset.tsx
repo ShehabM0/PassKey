@@ -26,7 +26,6 @@ export default function PasswordResetScreen() {
 
   const [showPassword, setshowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handlePassPress  = async () => {
     if (!password) {
@@ -38,8 +37,12 @@ export default function PasswordResetScreen() {
     try {
       await authApi.passwordReset({token, password});
 
-      setSuccess(true);
-      setTimeout(() => router.replace('/(auth)/login'), 1500);
+      setTimeout(() => 
+        router.replace({
+          pathname: '/(auth)/login',
+          params: { navSuccessMessage: 'Password has been reset'}
+        })
+      , 1500);
     } catch (error: any) {
       Alert.alert('Password Reset Failed!', error.message);
     } finally {
@@ -56,10 +59,6 @@ export default function PasswordResetScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      {
-        success &&
-        <SuccessMessage message='Your passwrod has been changed'/>
-      }
       <View style={styles.header}>
         <Text style={styles.headTitle}>PassKey<Text style={styles.plus}>+</Text></Text>
       </View>

@@ -85,7 +85,6 @@ export default function CredentialPage() {
     setSuccess(true);
     setIsLoading(true);
     setTimeout(() => {
-      setSuccess(false);
       setIsLoading(false);
       setEdit(false);
     }, 3000); 
@@ -98,7 +97,6 @@ export default function CredentialPage() {
   const onCopy = async (text: string) => {
     await Clipboard.setStringAsync(text);
     setPopup(true);
-    setTimeout(() => setPopup(false), 5000); 
   }
 
   const onCopyEmail = () => {
@@ -156,10 +154,18 @@ export default function CredentialPage() {
       <CreatePageHeader color={Colors.white} />
 
       { success &&
-        <SuccessMessage message='Your credential has been edited'/> }
+        <SuccessMessage
+          message='Credential updated'
+          onClose={()=> setSuccess(false)}
+        />
+      }
 
       { popup &&
-        <PopupMessage message='Copied to clipboard.'/> }
+        <PopupMessage 
+          message='Copied to clipboard.'
+          onClose={()=> setPopup(false)}
+        />
+      }
 
       { PIN &&
         <PasswordPIN credentialId={params.id} onClose={showPIN} setVerification={setVerification} setPassword={setPassword}/>

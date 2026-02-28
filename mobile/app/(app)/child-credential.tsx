@@ -1,10 +1,9 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import SuccessMessage from '@/components/SuccessMessage';
+import {  router, useLocalSearchParams } from 'expo-router';
 import CreatePageHeader from '@/components/PageHeader';
 import PasswordPIN from '@/components/PopUpPassword';
 import PopupMessage from '@/components/PopUpMessage';
 import { Colors } from '@/components/common/colors';
-import {  useLocalSearchParams } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import Svg, { Path } from 'react-native-svg';
@@ -44,18 +43,23 @@ export default function CredentialPage() {
   const [verify, setVerification] = useState(false);
 
   const [popup, setPopup] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if(verify)
       showPIN(false);
   }, [verify]);
+  
+  const handleDelete = () => {
+    router.replace({
+      pathname: '/homepage',
+      params: { navSuccessMessage: 'Credential deleted' }
+    })
+  }
 
   const onCopy = async (text: string) => {
     await Clipboard.setStringAsync(text);
     setPopup(true);
-    setTimeout(() => setPopup(false), 5000); 
   }
 
   const onCopyEmail = () => {
@@ -96,11 +100,12 @@ export default function CredentialPage() {
     <View style={styles.container} >
       <CreatePageHeader color={Colors.white} />
 
-      { success &&
-        <SuccessMessage message='Your credential has been deleted'/> }
-
       { popup &&
-        <PopupMessage message='Copied to clipboard.'/> }
+        <PopupMessage 
+          message='Copied to clipboard.'
+          onClose={()=> setPopup(false)}
+        />
+      }
 
       { PIN &&
         <PasswordPIN credentialId={params.id} onClose={showPIN} setVerification={setVerification} setPassword={setPassword}/>
@@ -159,6 +164,7 @@ export default function CredentialPage() {
           <View>
             <TouchableOpacity
               style={[styles.button, styles.deleteButton, isLoading && styles.buttonDisabled]}
+              onPress={handleDelete}
               disabled={isLoading}
             >
               <Feather name="trash" size={18} color="black" />

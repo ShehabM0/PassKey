@@ -1,12 +1,12 @@
 import { PASSWORD_UPDATE_STR } from '@/components/common/data';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import SuccessMessage from '@/components/SuccessMessage';
+import { useCountdown } from '@/context/CountdownContext';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import React, { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useAuth } from '@/context/AuthContext';
-import React, { useEffect, useState } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
 import { userApi } from '@/api/rest/user';
 import {
   KeyboardAvoidingView,
@@ -19,7 +19,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useCountdown } from '@/context/CountdownContext';
 
 export default function PasswordUpdateScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();
@@ -33,10 +32,8 @@ export default function PasswordUpdateScreen() {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setshowNewPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    console.log(token);
     if(!token) return;
     passwordUpdate();
   }, [token])
@@ -75,9 +72,13 @@ export default function PasswordUpdateScreen() {
     setIsLoading(true);
     try {
       await userApi.passwordUpdate(token);
-      setSuccess(true);
       setIsLoading(false);
-      setTimeout(() => router.replace('/(app)/settings'), 1500);
+      setTimeout(() => 
+        router.replace({
+          pathname: '/(app)/homepage',
+          params: { navSuccessMessage: 'Password updated'}
+        })
+      , 1500);
     } catch(error: any) {
       const message = error?.response?.data?.message || error.message;
       Alert.alert(`${token}`, message);
@@ -96,9 +97,6 @@ export default function PasswordUpdateScreen() {
       style={styles.container}
     >
       <PageHeader/>
-
-      { success &&
-        <SuccessMessage message='Your passwrod has been updated'/> }
 
       <View style={styles.content}>
         <Text style={styles.title}>Update your password</Text>

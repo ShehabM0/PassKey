@@ -9,6 +9,8 @@ export const Colors = {
   gray700: '#404040',    // Body text
   gray900: '#171717',    // Headings
 
+  green100: '#E8F7ED',   // Soft green
+  green200: '#22C55E',   // Strong Green
   error: '#DC2626',      // Errors only
   red: '#F43F5E',        // Background
 };

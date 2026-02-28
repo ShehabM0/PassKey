@@ -1,6 +1,7 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useAuth } from '@/context/AuthContext';
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import {
@@ -14,8 +15,6 @@ import {
     Text,
     View,
 } from 'react-native';
-import SuccessMessage from '@/components/SuccessMessage';
-import { useAuth } from '@/context/AuthContext';
 
 export default function RegisterScreen() {
   const { signup } = useAuth();
@@ -27,7 +26,6 @@ export default function RegisterScreen() {
 
   const [showPassword, setshowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
@@ -39,9 +37,13 @@ export default function RegisterScreen() {
     try {
       await signup({name, email, password})
 
-      setSuccess(true);
       setIsLoading(false);
-      setTimeout(() => router.replace('/(auth)/login'), 1500);
+      setTimeout(() => 
+        router.replace({
+          pathname: '/(auth)/login',
+          params: { navSuccessMessage: 'Account created'}
+        })
+      , 1500);
     } catch(error: any) {
       Alert.alert('Register Failed', error.message);
       setIsLoading(false);
@@ -61,10 +63,6 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      {
-        success &&
-        <SuccessMessage message='Your account has been created'/>
-      }
       <View style={styles.header}>
         <Text style={styles.headTitle}>PassKey<Text style={styles.plus}>+</Text></Text>
       </View>

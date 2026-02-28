@@ -1,7 +1,6 @@
 import { GET_USER_CREDENTIALS } from '@/api/graphql/queries';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { CREATE_CREDENTIAL } from '@/api/graphql/mutations';
-import SuccessMessage from '@/components/SuccessMessage';
 import PlatfromPicker from '@/components/PlatformPicker';
 import CreatePageHeader from '@/components/PageHeader';
 import { Colors } from '@/components/common/colors';
@@ -36,7 +35,6 @@ export default function CreateCredential() {
 
   const [createCredential] = useMutation(CREATE_CREDENTIAL);
 
-  const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [platform, setPlatform] = useState<PlatformDAO>();
   const [platfromPicker, setPlatformPicker] = useState(false);
@@ -48,7 +46,6 @@ export default function CreateCredential() {
     }
 
     setIsLoading(true);
-    setSuccess(true);
     try {
       await createCredential({
         variables: {
@@ -66,7 +63,10 @@ export default function CreateCredential() {
       });
 
       setIsLoading(false);
-      router.replace('/homepage');
+      router.replace({
+        pathname: '/homepage',
+        params: { navSuccessMessage: "Credential added" }
+      });
     } catch (error: any) {
       Alert.alert('Credential Creation Failed!', error.message);
       setIsLoading(false);
@@ -96,9 +96,6 @@ export default function CreateCredential() {
       style={styles.container}
     >
       <CreatePageHeader/>
-
-      { success &&
-        <SuccessMessage message='Your credential has been added'/> }
 
       { platfromPicker &&
         <PlatfromPicker onClose={closePlatformPicker} onSelect={platformSelect}/> }
