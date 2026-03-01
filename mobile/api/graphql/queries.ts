@@ -11,9 +11,9 @@ export const GET_USER = gql`
 `;
 
 export const GET_USER_CREDENTIALS = gql`
-  query GetUserCredentials($page: Int!, $limit: Int!) {
+  query GetUserCredentials($query: String, $page: Int!, $limit: Int!) {
     me {
-      credentials(page: $page, limit: $limit) {
+      credentials(query: $query, page: $page, limit: $limit) {
         data {
           id
           platformIcon

@@ -2,10 +2,13 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/components/common/colors';
 import { router } from 'expo-router';
-import { useState } from 'react';
 
-export default function HomeHeader() {
-  const [query, setQuery] = useState('');
+type HomeHeaderProps = {
+  query: string;
+  onChangeQuery: (value: string) => void;
+};
+
+export default function HomeHeader({ query, onChangeQuery }: HomeHeaderProps) {
 
   const settingsNav = () => {
     router.push('/settings');
@@ -38,14 +41,14 @@ export default function HomeHeader() {
             style={styles.input}
             placeholder="Search"
             value={query}
-            onChangeText={setQuery}
+            onChangeText={onChangeQuery}
             placeholderTextColor={Colors.gray500}
           />
 
           {
             query.length > 0 && 
             (
-              <TouchableOpacity onPress={() => setQuery('')}>
+              <TouchableOpacity onPress={() => onChangeQuery('')}>
                 <MaterialIcons name="cancel" size={20} color={Colors.gray700} />
               </TouchableOpacity>
             )

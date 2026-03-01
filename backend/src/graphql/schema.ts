@@ -5,7 +5,7 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     email: String!
-    credentials(page: Int, limit: Int): CredentialConnection!
+    credentials(page: Int, limit: Int, query: String): CredentialConnection!
   }
 
   type CredentialConnection {

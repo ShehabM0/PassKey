@@ -1,6 +1,6 @@
 import { GetUserCredentialsData, PaginationVars } from '@/types/graphql';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { FlatList, View, Text, StyleSheet } from 'react-native';
+import { FlatList, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { GET_USER_CREDENTIALS } from '@/api/graphql/queries';
 import SuccessMessage from '@/components/SuccessMessage';
 import CredentialCard from '@/components/CredentialCard';
@@ -17,14 +17,15 @@ export default function HomeScreen() {
   const page = 1;
 
   const [success, setSuccess] = useState(params?.navSuccessMessage?.length ? true : false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const { data, loading, error, fetchMore } = useQuery<
+  const { data, loading, fetchMore } = useQuery<
     GetUserCredentialsData,
     PaginationVars>
     (
       GET_USER_CREDENTIALS,
       {
-        variables: { page, limit },
+        variables: { page, limit, query: searchQuery  },
       }
     );
   
@@ -50,7 +51,9 @@ export default function HomeScreen() {
   }
 
   const emptyList = () => {
-    return (
+    return (loading && !data)? (
+      <ActivityIndicator size={30} color={Colors.gray900} />
+    ) : (
       <View style={styles.nocredentialsContainer}>
         <Text style={styles.emptyTitle}>No vaults yet</Text>
         <Text style={styles.emptySubtitle}>
@@ -65,8 +68,9 @@ export default function HomeScreen() {
 
     fetchMore({
       variables: {
+        query: searchQuery,
         page: pagination.currentPage + 1,
-        limit
+        limit,
       },
       updateQuery: (prev: any, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
@@ -87,15 +91,16 @@ export default function HomeScreen() {
     });
   };
 
-  if(loading && !data)
-    return <SplashScreen/>
 
   return (
       <View style={{flex: 1}}>
-        <HomeHeader/>
+        <HomeHeader query={searchQuery} onChangeQuery={setSearchQuery} />
 
         { success &&
-          <SuccessMessage message={params.navSuccessMessage} onClose={() => setSuccess(false)}/>
+          <SuccessMessage
+            message={params.navSuccessMessage}
+            onClose={() => setSuccess(false)}
+          />
         }
         
         <View style={styles.bodyContainer}>

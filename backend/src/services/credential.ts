@@ -1,6 +1,6 @@
 import type { PaginationParams, PaginatedResult } from '../db/pagination.ts'
 import { type CredentialDAO, credentials, type Credential } from '../db/credentials-schema.ts'
-import { eq, desc, countDistinct, and, max, ne, getTableColumns } from 'drizzle-orm'
+import { eq, desc, countDistinct, and, max, ne, getTableColumns, ilike, or } from 'drizzle-orm'
 import { db } from '../config/db-connection.ts'
 import { logger } from '../config/logger.ts'
 import { realtimeTopic } from 'drizzle-orm/supabase'
@@ -126,17 +126,27 @@ JOIN (
   GROUP BY platform_title
 ) c2 ON c1.platform_title = c2.platform_title AND c1.created_at = c2.max_time;
 */
-const getUserCredentials = async(uid: number, pagination?: PaginationParams) => {
+const getUserCredentials = async(uid: number, pagination?: PaginationParams, query?: string) => {
   const page = (pagination?.page && pagination.page > 0) ? pagination.page : 1
   const limit = (pagination?.limit && pagination.limit > 0) ? pagination.limit : 10
   const offset = (page - 1) * limit
 
   try {
+    const baseWhere = eq(credentials.uid, uid)
+    const searchWhere = query ?
+      and(
+        baseWhere,
+        or(
+          ilike(credentials.platformTitle, `%${query}%`),
+          ilike(credentials.email, `%${query}%`)
+        )
+      ) : baseWhere
+
     const totalUserCredentials = await db
       .select({ count: countDistinct(credentials.platformTitle) })
       .from(credentials)
-      .where(eq(credentials.uid, uid))
-      const totalItems: number = totalUserCredentials?.[0]?.count ?? 0;
+      .where(searchWhere)
+    const totalItems: number = totalUserCredentials?.[0]?.count ?? 0;
 
     const latestPerPlatform = db
       .select({
@@ -144,7 +154,7 @@ const getUserCredentials = async(uid: number, pagination?: PaginationParams) => 
         maxTime: max(credentials.created_at).as('max_time'),
       })
       .from(credentials)
-      .where(eq(credentials.uid, uid))
+      .where(searchWhere)
       .groupBy(credentials.platformTitle)
       .as('latest')
 

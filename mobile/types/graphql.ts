@@ -38,6 +38,7 @@ export interface GetCredentialPasswordData {
 }
 
 export interface PaginationVars {
+  query?: string | null;
   page: number;
   limit: number;
 }
