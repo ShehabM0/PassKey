@@ -6,7 +6,6 @@ export default function AppLayout() {
       <Stack.Screen name="homepage" />
       <Stack.Screen name="settings" />
       <Stack.Screen name="credential" />
-      <Stack.Screen name="child-credential" />
       <Stack.Screen name="create-credential" />
     </Stack>
   );

@@ -41,6 +41,24 @@ const getCredential = async(credentialId: number) => {
   }
 }
 
+const findDublicateCredential = async(credentialId: number, credentialEmail: string, platformTitle: string) => {
+  try {
+    const [credential] = await db
+    .select()
+    .from(credentials)
+    .where(and(
+      ne(credentials.id, credentialId),
+      eq(credentials.email, credentialEmail),
+      eq(credentials.platformTitle, platformTitle),
+    ))
+
+    return credential
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Error finding credential!'
+    throw new Error(message)
+  }
+}
+
 const getRelatedCredentials = async(uid: number, id: number, pagination?: PaginationParams) => {
   const page = (pagination?.page && pagination.page > 0) ? pagination.page : 1
   const limit = (pagination?.limit && pagination.limit > 0) ? pagination.limit : 10
@@ -199,4 +217,4 @@ const updateCredential = async(credential: Credential) => {
   }
 }
 
-export { createCredential, getCredential, getRelatedCredentials, getUserCredentials, deleteCredential, updateCredential }
+export { createCredential, getCredential, findDublicateCredential, getRelatedCredentials, getUserCredentials, deleteCredential, updateCredential }

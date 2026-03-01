@@ -25,14 +25,12 @@ export const CREATE_CREDENTIAL = gql`
 
 export const UPDATE_CREDENTIAL = gql`
   mutation UpdateCredential(
-    $credentialId: ID!
-    $platformTitle: String
+    $credentialId: Int!
     $email: String
     $password: String
   ) {
     updateCredential(
       credentialId: $credentialId
-      platformTitle: $platformTitle
       email: $email
       password: $password
     ) {
@@ -41,7 +39,6 @@ export const UPDATE_CREDENTIAL = gql`
       platformTitle
       platformColor
       email
-      password
       created_at
       updated_at
     }

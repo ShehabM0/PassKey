@@ -1,5 +1,8 @@
 import { GET_RELATED_CREDENTIALS } from '@/api/graphql/queries';
+import { GET_USER_CREDENTIALS } from '@/api/graphql/queries';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { UPDATE_CREDENTIAL } from '@/api/graphql/mutations';
 import { GetRelatedCredentialsData } from '@/types/graphql';
 import { router, useLocalSearchParams } from 'expo-router';
 import SuccessMessage from '@/components/SuccessMessage';
@@ -10,7 +13,6 @@ import PopupMessage from '@/components/PopUpMessage';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
-import { useQuery } from '@apollo/client/react';
 import Svg, { Path } from 'react-native-svg';
 import { useEffect, useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
@@ -32,7 +34,9 @@ export default function CredentialPage() {
     platformIcon: string,
     platformTitle: string,
     platformColor: string,
-    email: string;
+    email: string,
+    created_at: string,
+    updated_at: string
   }>();
 
   const limit = 20;
@@ -49,7 +53,7 @@ export default function CredentialPage() {
 
   const credentialPageNav = (cred: any) => {
     router.push({
-      pathname: '/child-credential',
+      pathname: '/credential',
       params: cred
     });
   }
@@ -62,6 +66,8 @@ export default function CredentialPage() {
   const [email, setEmail] = useState(credential.email)
   const [password, setPassword] = useState(credential.password)
   const [showPassword, setshowPassword] = useState(false);
+
+  const [updateCredential] = useMutation(UPDATE_CREDENTIAL);
 
   const [PIN, setPIN] = useState(false);
   const [verify, setVerification] = useState(false);
@@ -82,16 +88,44 @@ export default function CredentialPage() {
       return;
     }
 
-    setSuccess(true);
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+        await updateCredential({
+        variables: {
+          credentialId: Number(params.id),
+          email,
+          password
+        },
+        refetchQueries: [
+          {
+            query: GET_USER_CREDENTIALS,
+            variables: { page: 1, limit: 20 },
+          },
+          {
+            query: GET_RELATED_CREDENTIALS,
+            variables: { id: Number(params.id), page: 1, limit },
+          },
+        ],
+        awaitRefetchQueries: true,
+      });
+
       setIsLoading(false);
-      setEdit(false);
-    }, 3000); 
+      setSuccess(true);
+      router.replace({
+        pathname: '/homepage',
+        params: { navSuccessMessage: "Credential updated" }
+      });
+    } catch (error: any) {
+      Alert.alert('Credential Creation Failed!', error.message);
+      setIsLoading(false);
+    }
   };
 
   const onEdit = () => {
-    setEdit(true);
+    if(verify)
+      setEdit(true);
+    else
+      showPIN(true);
   }
 
   const onCopy = async (text: string) => {
@@ -148,6 +182,14 @@ export default function CredentialPage() {
     });
   };
 
+  const formatDate = (iso?: string) => {
+    if (!iso) return '';
+
+    return new Date(iso).toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  };
 
   return (
     <View style={styles.container} >
@@ -259,12 +301,33 @@ export default function CredentialPage() {
           }
         </View>
 
+        {/* Timestamps */}
+        <View style={styles.metaCard}>
+          <View style={styles.metaRow}>
+            <MaterialIcons name="schedule" size={18} color={Colors.gray500} />
+            <View style={styles.metaTextContainer}>
+              <Text style={styles.metaLabel}>Created</Text>
+              <Text style={styles.metaValue}>{formatDate(params.created_at)}</Text>
+            </View>
+          </View>
+
+          <View style={styles.metaDivider} />
+
+          <View style={styles.metaRow}>
+            <MaterialIcons name="update" size={18} color={Colors.gray500} />
+            <View style={styles.metaTextContainer}>
+              <Text style={styles.metaLabel}>Last updated</Text>
+              <Text style={styles.metaValue}>{formatDate(params.updated_at)}</Text>
+            </View>
+          </View>
+        </View>
+
         {/* Horzinotal line */}
         <View style={styles.horzLineContainer}>
           <View style={styles.horzLine}/>
         </View>
 
-        {/* Credetnial history */}
+        {/* Related Credetnial */}
         {
           credentials?.length ? (
             <>
@@ -280,13 +343,16 @@ export default function CredentialPage() {
               </TouchableOpacity>
             )}
             </>
-          ) : (
+          ) : ( loading ? (
+              <ActivityIndicator size={24} color={Colors.black} />
+            ) : (
             <View style={styles.nocredentialsContainer}>
-              <Text style={styles.emptyTitle}>No credential history</Text>
+              <Text style={styles.emptyTitle}>No Other Accounts</Text>
               <Text style={styles.emptySubtitle}>
-                Changes to this credential will appear here
+                Other credential accounts will appear here
               </Text>
             </View>
+            )
           )
         }
       </ScrollView>
@@ -389,6 +455,40 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     height: 1,
     width: '80%',
+  },
+
+  metaCard: {
+    backgroundColor: Colors.gray100,
+    borderRadius: 12,
+    padding: 14,
+    marginTop: 20,
+  },
+
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  metaTextContainer: {
+    marginLeft: 10,
+  },
+
+  metaLabel: {
+    fontSize: 12,
+    color: Colors.gray500,
+    fontWeight: '500',
+  },
+
+  metaValue: {
+    fontSize: 14,
+    color: Colors.gray900,
+    fontWeight: '600',
+  },
+
+  metaDivider: {
+    height: 1,
+    backgroundColor: Colors.gray200,
+    marginVertical: 10,
   },
 
   credentialsContainer: {

@@ -1,4 +1,4 @@
-import { createCredential, deleteCredential, getCredential, updateCredential } from '../../services/credential.ts'
+import { createCredential, deleteCredential, findDublicateCredential, getCredential, updateCredential } from '../../services/credential.ts'
 import type { Credential } from '../../db/credentials-schema.ts'
 import { errorFormat } from '../../utils/error-format.ts'
 import { platforms } from '../../services/platform.ts'
@@ -84,10 +84,14 @@ const credentialResolvers = {
           credential.password = encryptedPass
         }
 
+        const dubCredential = await findDublicateCredential(credentialId, email, credential.platformTitle)
+        if(dubCredential)
+          throw new Error('Credential with the provided email already exist!')
+
         const updatedCredential = await updateCredential(credential)
         if(!updatedCredential)
           throw new Error('Credential not updated!')
-        return updatedCredential
+        return updateCredential
       } catch (e) {
         const message = e instanceof Error ? e.message : 'Error updating credential!'
         logger.error(message)
