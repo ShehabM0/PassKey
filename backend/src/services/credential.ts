@@ -41,13 +41,19 @@ const getCredential = async(credentialId: number) => {
   }
 }
 
-const findDublicateCredential = async(credentialId: number, credentialEmail: string, platformTitle: string) => {
+const findDublicateCredential = async(credentialId: number | undefined, credentialEmail: string, platformTitle: string) => {
   try {
-    const [credential] = await db
+    const [credential] = credentialId? await db
     .select()
     .from(credentials)
     .where(and(
       ne(credentials.id, credentialId),
+      eq(credentials.email, credentialEmail),
+      eq(credentials.platformTitle, platformTitle),
+    )) : await db
+    .select()
+    .from(credentials)
+    .where(and(
       eq(credentials.email, credentialEmail),
       eq(credentials.platformTitle, platformTitle),
     ))

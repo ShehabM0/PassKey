@@ -31,6 +31,10 @@ const credentialResolvers = {
         if(!platform)
           throw new Error('Error getting platform!')
 
+        const dubCredential = await findDublicateCredential(undefined, email, platformTitle)
+        if(dubCredential)
+          throw new Error('Credential with the provided email already exist!')
+
         const encryptedPass = encrypt(password)
 
         const credential: Credential = {

@@ -86,7 +86,6 @@ export default function CreateCredential() {
   }
 
   const platformSelect = (platform: any) => {
-    console.log(platform)
     setPlatform(platform);
   };
 

@@ -1,8 +1,8 @@
+import { DELETE_CREDENTIAL, UPDATE_CREDENTIAL } from '@/api/graphql/mutations';
 import { GET_RELATED_CREDENTIALS } from '@/api/graphql/queries';
 import { GET_USER_CREDENTIALS } from '@/api/graphql/queries';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { UPDATE_CREDENTIAL } from '@/api/graphql/mutations';
 import { GetRelatedCredentialsData } from '@/types/graphql';
 import { router, useLocalSearchParams } from 'expo-router';
 import SuccessMessage from '@/components/SuccessMessage';
@@ -68,6 +68,7 @@ export default function CredentialPage() {
   const [showPassword, setshowPassword] = useState(false);
 
   const [updateCredential] = useMutation(UPDATE_CREDENTIAL);
+  const [deleteCredential] = useMutation(DELETE_CREDENTIAL);
 
   const [PIN, setPIN] = useState(false);
   const [verify, setVerification] = useState(false);
@@ -116,7 +117,39 @@ export default function CredentialPage() {
         params: { navSuccessMessage: "Credential updated" }
       });
     } catch (error: any) {
-      Alert.alert('Credential Creation Failed!', error.message);
+      Alert.alert('Updating Credential Failed!', error.message);
+      setIsLoading(false);
+    }
+  };
+
+  const onDelete = async () => {
+    setIsLoading(true);
+    try {
+        await deleteCredential({
+        variables: {
+          credentialId: Number(params.id),
+        },
+        refetchQueries: [
+          {
+            query: GET_USER_CREDENTIALS,
+            variables: { page: 1, limit: 20 },
+          },
+          {
+            query: GET_RELATED_CREDENTIALS,
+            variables: { id: Number(params.id), page: 1, limit },
+          },
+        ],
+        awaitRefetchQueries: true,
+      });
+
+      setIsLoading(false);
+      setSuccess(true);
+      router.replace({
+        pathname: '/homepage',
+        params: { navSuccessMessage: "Credential deleted" }
+      });
+    } catch (error: any) {
+      Alert.alert('Credential deletion Failed!', error.message);
       setIsLoading(false);
     }
   };
@@ -279,7 +312,7 @@ export default function CredentialPage() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.button, styles.deleteButton, isLoading && styles.buttonDisabled]}
-                  onPress={onEdit}
+                  onPress={onDelete}
                   disabled={isLoading}
                 >
                   <Feather name="trash" size={18} color="black" />
