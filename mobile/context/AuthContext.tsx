@@ -2,6 +2,7 @@ import { User, SigninCredentials, AuthContextType, SignupCredentials } from '../
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authApi } from '../api/rest/auth';
+import { router } from 'expo-router';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -22,6 +23,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log(accessToken)
       console.log(refreshToken)
       console.log("---------------######---------------")
+      if (!accessToken && !refreshToken) {
+        await clearAuthData();
+        return;
+      }
 
       try {
         const me = await authApi.currentUser();
@@ -45,16 +50,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const me = await authApi.currentUser();
         setUser(me);
         await AsyncStorage.setItem('userData', JSON.stringify(me));
-      } catch (err) {
-        console.error('Refresh token flow failed:', err);
-        await signout();
+      } catch (error: any) {
+        const message = error?.response?.data?.message || 
+          error?.response?.data?.error ||
+          error.message;
+        console.error('Refresh token flow failed:', message);
+        await clearAuthData();
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      await signout();
+      await clearAuthData();
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const clearAuthData = async () => {
+    await AsyncStorage.removeItem('accessToken');
+    await AsyncStorage.removeItem('refreshToken');
+    await AsyncStorage.removeItem('userData');
+    setUser(null);
+    router.replace('/(auth)/login');
   };
 
   const signup = async (credentials: SignupCredentials) => {
@@ -106,7 +122,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(data);
     return data;
   };
-
 
   return (
     <AuthContext.Provider
