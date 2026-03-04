@@ -1,4 +1,5 @@
 import { createCredential, deleteCredential, findDublicateCredential, getCredential, updateCredential } from '../../services/credential.ts'
+import { GraphQLError } from 'graphql';
 import type { Credential } from '../../db/credentials-schema.ts'
 import { errorFormat } from '../../utils/error-format.ts'
 import { platforms } from '../../services/platform.ts'
@@ -19,7 +20,7 @@ const credentialResolvers = {
         const uid = context?.uid
 
         if (!uid)
-          throw new Error('Authentication required!')
+          throw new GraphQLError('Authentication required!');
 
         const validation = emailSchema.safeParse({ email })
         if(!validation.success) {
@@ -65,7 +66,7 @@ const credentialResolvers = {
         const { credentialId, email, password } = args
         const uid = context.uid
         if (!uid)
-          throw new Error('Authentication required!')
+          throw new GraphQLError('Authentication required!');
 
         const credential = await getCredential(credentialId)
         if(!credential)
@@ -107,7 +108,7 @@ const credentialResolvers = {
         const credentialId = Number(args.credentialId)
         const uid = context.uid
         if (!uid)
-          throw new Error('Authentication required!')
+          throw new GraphQLError('Authentication required!');
 
         const deletedCredential = await deleteCredential(credentialId, uid)
         return (deletedCredential) ?

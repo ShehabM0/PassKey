@@ -54,11 +54,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const message = error?.response?.data?.message || 
           error?.response?.data?.error ||
           error.message;
-        console.error('Refresh token flow failed:', message);
+        console.warn('Refresh token flow failed:', message);
         await clearAuthData();
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.warn('Auth check failed:', error);
       await clearAuthData();
     } finally {
       setIsLoading(false);

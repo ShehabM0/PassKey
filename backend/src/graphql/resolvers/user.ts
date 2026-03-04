@@ -3,6 +3,7 @@ import { getUserById } from '../../services/user.ts'
 import type { GraphQLContext } from '../context.ts'
 import { logger } from '../../config/logger.ts'
 import { decrypt } from '../../utils/encrypt.ts'
+import { GraphQLError } from 'graphql'
 
 type UserParent = {
   id: string
@@ -12,7 +13,7 @@ const userResolvers = {
   Query: {
     me: async (_: unknown, __: unknown, context: GraphQLContext) => {
       if (!context.uid)
-        throw new Error('Authentication required!')
+        throw new GraphQLError('Authentication required!');
 
       try {
         const user = await getUserById(context.uid)
@@ -31,7 +32,7 @@ const userResolvers = {
     relatedCredentials: async (_: unknown, args: { id: number, page?: number, limit?: number }, context: GraphQLContext) => {
       const uid = context.uid;
       if (!uid)
-        throw new Error('Authentication required!')
+        throw new GraphQLError('Authentication required!');
 
       try {
         const userCredentials = await getRelatedCredentials(uid, args.id, { page: args.page, limit: args.limit })
@@ -53,7 +54,7 @@ const userResolvers = {
     },
     revealCredentialPassword: async (_: unknown, args: { id: number }, context: GraphQLContext) => {
       if (!context.uid)
-        throw new Error('Authentication required!')
+        throw new GraphQLError('Authentication required!');
 
       try {
         const credential = await getCredential(args.id)
@@ -77,7 +78,7 @@ const userResolvers = {
       context: GraphQLContext
     ) => {
       if (!context.uid)
-        throw new Error('Authentication required!')
+        throw new GraphQLError('Authentication required!');
 
       try {
         const uid = Number(parent.id)
