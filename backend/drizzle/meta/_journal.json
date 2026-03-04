@@ -5,71 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1764920677261,
-      "tag": "0000_marvelous_typhoid_mary",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1765004573420,
-      "tag": "0001_regular_scarlet_spider",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1765090122801,
-      "tag": "0002_cheerful_khan",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1765090904017,
-      "tag": "0003_ambitious_cloak",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1765133631459,
-      "tag": "0004_complex_phantom_reporter",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1765133873975,
-      "tag": "0005_amusing_senator_kelly",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1765861322117,
-      "tag": "0006_clever_exiles",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1765867857092,
-      "tag": "0007_mute_pestilence",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1765883061406,
-      "tag": "0008_gifted_james_howlett",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1771969822103,
-      "tag": "0009_cheerful_firebird",
+      "when": 1772631097196,
+      "tag": "0000_medical_luckman",
       "breakpoints": true
     }
   ]

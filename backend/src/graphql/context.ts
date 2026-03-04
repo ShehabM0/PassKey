@@ -5,7 +5,7 @@ import { logger } from '../config/logger.ts'
 type GraphQLContext = {
   req: Request
   res: Response
-  uid?: number
+  uid?: string
 }
 
 const createContext = async ({ req, res }: { req: Request; res: Response }) => {

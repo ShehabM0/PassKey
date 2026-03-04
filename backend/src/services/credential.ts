@@ -3,7 +3,6 @@ import { type CredentialDAO, credentials, type Credential } from '../db/credenti
 import { eq, desc, countDistinct, and, max, ne, getTableColumns, ilike, or } from 'drizzle-orm'
 import { db } from '../config/db-connection.ts'
 import { logger } from '../config/logger.ts'
-import { realtimeTopic } from 'drizzle-orm/supabase'
 
 const createCredential = async(credential: Credential) => {
   try {
@@ -27,7 +26,7 @@ const createCredential = async(credential: Credential) => {
   }
 }
 
-const getCredential = async(credentialId: number) => {
+const getCredential = async(credentialId: string) => {
   try {
     const [credential] = await db
     .select()
@@ -41,7 +40,7 @@ const getCredential = async(credentialId: number) => {
   }
 }
 
-const findDublicateCredential = async(credentialId: number | undefined, credentialEmail: string, platformTitle: string) => {
+const findDublicateCredential = async(credentialId: string | undefined, credentialEmail: string, platformTitle: string) => {
   try {
     const [credential] = credentialId? await db
     .select()
@@ -65,7 +64,7 @@ const findDublicateCredential = async(credentialId: number | undefined, credenti
   }
 }
 
-const getRelatedCredentials = async(uid: number, id: number, pagination?: PaginationParams) => {
+const getRelatedCredentials = async(uid: string, id: string, pagination?: PaginationParams) => {
   const page = (pagination?.page && pagination.page > 0) ? pagination.page : 1
   const limit = (pagination?.limit && pagination.limit > 0) ? pagination.limit : 10
   const offset = (page - 1) * limit
@@ -126,10 +125,11 @@ JOIN (
   GROUP BY platform_title
 ) c2 ON c1.platform_title = c2.platform_title AND c1.created_at = c2.max_time;
 */
-const getUserCredentials = async(uid: number, pagination?: PaginationParams, query?: string) => {
+const getUserCredentials = async(uid: string, pagination?: PaginationParams, query?: string) => {
   const page = (pagination?.page && pagination.page > 0) ? pagination.page : 1
   const limit = (pagination?.limit && pagination.limit > 0) ? pagination.limit : 10
   const offset = (page - 1) * limit
+  console.log(uid)
 
   try {
     const baseWhere = eq(credentials.uid, uid)
@@ -191,7 +191,7 @@ const getUserCredentials = async(uid: number, pagination?: PaginationParams, que
   }
 }
 
-const deleteCredential = async(credentialId: number, uid: number) => {
+const deleteCredential = async(credentialId: string, uid: string) => {
   try {
     const [credential] = await db
     .select()
@@ -218,8 +218,11 @@ const deleteCredential = async(credentialId: number, uid: number) => {
 
 const updateCredential = async(credential: Credential) => {
   try {
+    if(!credential || !credential.id)
+      throw new Error('Credential is not found!')
+
     credential.updated_at = new Date()
-    const credentialId = Number(credential.id)
+    const credentialId = credential.id
 
     const [updatedCredential] = await db.update(credentials)
     .set(credential)

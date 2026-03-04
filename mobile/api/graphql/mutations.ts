@@ -24,7 +24,7 @@ export const CREATE_CREDENTIAL = gql`
 
 export const UPDATE_CREDENTIAL = gql`
   mutation UpdateCredential(
-    $credentialId: Int!
+    $credentialId: ID!
     $email: String
     $password: String
   ) {
@@ -45,7 +45,7 @@ export const UPDATE_CREDENTIAL = gql`
 `;
 
 export const DELETE_CREDENTIAL = gql`
-  mutation DeleteCredential($credentialId: Int!) {
+  mutation DeleteCredential($credentialId: ID!) {
     deleteCredential(credentialId: $credentialId) {
       success
       message

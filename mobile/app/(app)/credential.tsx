@@ -41,15 +41,17 @@ export default function CredentialPage() {
 
   const limit = 20;
   const page = 1;
-  const { data, loading, fetchMore } = useQuery<GetRelatedCredentialsData> (
+  const { data, loading, error, fetchMore } = useQuery<GetRelatedCredentialsData> (
       GET_RELATED_CREDENTIALS,
       {
-        variables: { id: Number(params.id), page, limit },
+        variables: { id: params.id, page, limit },
       }
     );
   
   const credentials = data?.relatedCredentials?.data || [];
   const pagination = data?.relatedCredentials?.pagination;
+
+  console.log(error)
 
   const credentialPageNav = (cred: any) => {
     router.push({
@@ -93,7 +95,7 @@ export default function CredentialPage() {
     try {
         await updateCredential({
         variables: {
-          credentialId: Number(params.id),
+          credentialId: params.id,
           email,
           password
         },
@@ -104,7 +106,7 @@ export default function CredentialPage() {
           },
           {
             query: GET_RELATED_CREDENTIALS,
-            variables: { id: Number(params.id), page: 1, limit },
+            variables: { id: params.id, page: 1, limit },
           },
         ],
         awaitRefetchQueries: true,
@@ -127,7 +129,7 @@ export default function CredentialPage() {
     try {
         await deleteCredential({
         variables: {
-          credentialId: Number(params.id),
+          credentialId: params.id,
         },
         refetchQueries: [
           {
@@ -136,7 +138,7 @@ export default function CredentialPage() {
           },
           {
             query: GET_RELATED_CREDENTIALS,
-            variables: { id: Number(params.id), page: 1, limit },
+            variables: { id: params.id, page: 1, limit },
           },
         ],
         awaitRefetchQueries: true,

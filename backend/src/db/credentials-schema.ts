@@ -1,9 +1,9 @@
-import { index, text, integer, pgTable, serial, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { index, text, pgTable, uuid, varchar, timestamp } from 'drizzle-orm/pg-core';
 import { users } from './users-schema.ts';
 
 export const credentials = pgTable('credentials', {
-  id: serial('id').primaryKey(),
-  uid: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade'}),
+  id: uuid('id').defaultRandom().primaryKey(),
+  uid: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade'}),
   platformIcon: text('platform_icon').notNull(),
   platformTitle: varchar('platform_title', { length: 255 }).notNull(),
   platformColor: varchar('platform_color', { length: 255 }).notNull(),
@@ -16,8 +16,8 @@ export const credentials = pgTable('credentials', {
 }));
 
 export type CredentialDAO = {
-  id: number;
-  uid: number;
+  id: string;
+  uid: string;
   platformIcon: string;
   platformTitle: string;
   platformColor: string;
@@ -27,8 +27,8 @@ export type CredentialDAO = {
 }
 
 export type Credential = {
-  id?: number;
-  uid: number;
+  id?: string;
+  uid: string;
   platformIcon: string;
   platformTitle: string;
   platformColor: string;

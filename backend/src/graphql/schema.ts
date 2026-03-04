@@ -66,13 +66,13 @@ export const typeDefs = gql`
   type Query {
     me: User
     platform: Platform!
-    relatedCredentials(id: Int!, page: Int, limit: Int): CredentialConnection!
-    revealCredentialPassword(id: String!): String!
+    relatedCredentials(id: ID!, page: Int, limit: Int): CredentialConnection!
+    revealCredentialPassword(id: ID!): String!
   }
 
   type Mutation {
     createCredential(platformTitle: String!, email: String!, password: String!): CredentialDAO!
-    updateCredential(credentialId: Int!, email: String, password: String): CredentialDAO!
-    deleteCredential(credentialId: Int!): Response!
+    updateCredential(credentialId: ID!, email: String, password: String): CredentialDAO!
+    deleteCredential(credentialId: ID!): Response!
   }
 `

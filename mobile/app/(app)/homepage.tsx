@@ -1,10 +1,9 @@
+import { FlatList, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { GetUserCredentialsData, PaginationVars } from '@/types/graphql';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { FlatList, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { GET_USER_CREDENTIALS } from '@/api/graphql/queries';
 import SuccessMessage from '@/components/SuccessMessage';
 import CredentialCard from '@/components/CredentialCard';
-import SplashScreen from '@/components/SplashScreen';
 import { Colors } from '@/components/common/colors';
 import HomeHeader from '@/components/HomeHeader';
 import { useQuery } from '@apollo/client/react';
@@ -19,7 +18,7 @@ export default function HomeScreen() {
   const [success, setSuccess] = useState(params?.navSuccessMessage?.length ? true : false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data, loading, fetchMore } = useQuery<
+  const { data, loading, error, fetchMore } = useQuery<
     GetUserCredentialsData,
     PaginationVars>
     (

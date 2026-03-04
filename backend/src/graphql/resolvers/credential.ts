@@ -59,7 +59,7 @@ const credentialResolvers = {
     },
     updateCredential: async (
       _: unknown,
-      args: { credentialId: number, email: string, password: string },
+      args: { credentialId: string, email: string, password: string },
       context: GraphQLContext
     ) => {
       try {
@@ -96,16 +96,16 @@ const credentialResolvers = {
         const updatedCredential = await updateCredential(credential)
         if(!updatedCredential)
           throw new Error('Credential not updated!')
-        return updateCredential
+        return updatedCredential
       } catch (e) {
         const message = e instanceof Error ? e.message : 'Error updating credential!'
         logger.error(message)
         throw new Error(message)
       }
     },
-    deleteCredential: async ( _: unknown, args: { credentialId: number }, context: GraphQLContext) => {
+    deleteCredential: async ( _: unknown, args: { credentialId: string }, context: GraphQLContext) => {
       try {
-        const credentialId = Number(args.credentialId)
+        const credentialId = args.credentialId
         const uid = context.uid
         if (!uid)
           throw new GraphQLError('Authentication required!');

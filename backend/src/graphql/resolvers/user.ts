@@ -29,7 +29,7 @@ const userResolvers = {
         throw new Error(message)
       }
     },
-    relatedCredentials: async (_: unknown, args: { id: number, page?: number, limit?: number }, context: GraphQLContext) => {
+    relatedCredentials: async (_: unknown, args: { id: string, page?: number, limit?: number }, context: GraphQLContext) => {
       const uid = context.uid;
       if (!uid)
         throw new GraphQLError('Authentication required!');
@@ -52,7 +52,7 @@ const userResolvers = {
         throw new Error(message)
       }
     },
-    revealCredentialPassword: async (_: unknown, args: { id: number }, context: GraphQLContext) => {
+    revealCredentialPassword: async (_: unknown, args: { id: string }, context: GraphQLContext) => {
       if (!context.uid)
         throw new GraphQLError('Authentication required!');
 
@@ -81,7 +81,7 @@ const userResolvers = {
         throw new GraphQLError('Authentication required!');
 
       try {
-        const uid = Number(parent.id)
+        const uid = parent.id
         const userCredentials = await getUserCredentials(
           uid,
           { page: args.page, limit: args.limit },

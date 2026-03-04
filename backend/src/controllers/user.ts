@@ -1,4 +1,4 @@
-import { getUserByEmail, getUserById, updateUser } from '../services/user.ts'
+import { getUserByEmail, getUserById, getUserPass, updateUser, updateUserPass } from '../services/user.ts'
 import { emailSchema, passwordSchema } from '../validation/user.ts'
 import { compareHash, hashStr } from '../utils/hash.ts'
 import { errorFormat } from '../utils/error-format.ts'
@@ -62,7 +62,6 @@ const verifyEmail = async(req: Request, res: Response) => {
     const updatedUser = await updateUser(user)
 
     return res.status(200).json({ message: `Your email ${updatedUser.email} is now verified.` })
-
   } catch(e) {
     let statusCode = 400
     if (e instanceof Error) {
@@ -134,9 +133,9 @@ const passwordReset = async(req: Request, res: Response) => {
     if(!uid)
       return res.status(400).json({ message: "Invalid or expired token!" })
 
-    const user = await getUserById(Number(uid))
-    user.password = await hashStr(password)
-    await updateUser(user)
+    const uidNum = Number(uid)
+    const newPassword = await hashStr(password)
+    await updateUserPass(uidNum, newPassword)
     await redis.del('password-reset:${token}')
 
     return res.status(200).json({ message: 'Your password has been reset.' })
@@ -176,10 +175,11 @@ const updatePassword = async(req: Request, res: Response) => {
   }
 
   const user = await getUserById(uid)
+  const userPass = await getUserPass(uid)
   if(!user.email_confirm)
     return res.status(403).json({ message: "Please verify your email first!" })
 
-  const confirmPass = await compareHash(oldPassword, user.password)
+  const confirmPass = await compareHash(oldPassword, userPass)
   if(!confirmPass)
     return res.status(401).json({ message: "Current password is incorrect, please try again!" })
 
@@ -216,11 +216,9 @@ const verifyUpdatePassword = async(req: Request, res: Response) => {
   if(!newHashedPass)
     return res.status(400).json({ message: "Couldn't find redis password!" })
 
-  const user = await getUserById(uid)
-  user.password = newHashedPass
-  await updateUser(user)
+  await updateUserPass(uid, newHashedPass)
   
-  return res.status(200).json({ message: "Your password has been updated successfully.", data: newHashedPass })
+  return res.status(200).json({ message: "Your password has been updated successfully." })
 }
 
 
@@ -231,8 +229,8 @@ const verifyPassword = async(req: Request, res: Response) => {
   if(!uid)
     return res.status(400).json({ message: "Failed to get user id!" })
 
-  const user = await getUserById(uid)
-  const confirmPass = await compareHash(password, user.password)
+  const userPass = await getUserPass(uid)
+  const confirmPass = await compareHash(password, userPass)
 
   return confirmPass ?
     res.status(200).json({ message: "Verified user." }) :

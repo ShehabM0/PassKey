@@ -1,1 +1,0 @@
-DROP INDEX "refresh_token_idx";

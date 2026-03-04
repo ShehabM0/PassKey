@@ -37,7 +37,7 @@ export const GET_USER_CREDENTIALS = gql`
 `;
 
 export const GET_RELATED_CREDENTIALS = gql`
-  query GetRelatedCredentials($id: Int!, $page: Int!, $limit: Int!) {
+  query GetRelatedCredentials($id: ID!, $page: Int!, $limit: Int!) {
     relatedCredentials(id: $id, page: $page, limit: $limit) {
       data {
         id
@@ -62,7 +62,7 @@ export const GET_RELATED_CREDENTIALS = gql`
 
 
 export const GET_CREDENTIAL_PASSWORD = gql`
-  query GetCredentialPassword($id: String!) {
+  query GetCredentialPassword($id: ID!) {
     revealCredentialPassword(id: $id)
   }
 `;
