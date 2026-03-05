@@ -51,8 +51,6 @@ export default function CredentialPage() {
   const credentials = data?.relatedCredentials?.data || [];
   const pagination = data?.relatedCredentials?.pagination;
 
-  console.log(error)
-
   const credentialPageNav = (cred: any) => {
     router.push({
       pathname: '/credential',
@@ -119,7 +117,10 @@ export default function CredentialPage() {
         params: { navSuccessMessage: "Credential updated" }
       });
     } catch (error: any) {
-      Alert.alert('Updating Credential Failed!', error.message);
+      const message = error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      error.message;
+      Alert.alert('Updating Credential Failed!', message);
       setIsLoading(false);
     }
   };
@@ -151,7 +152,10 @@ export default function CredentialPage() {
         params: { navSuccessMessage: "Credential deleted" }
       });
     } catch (error: any) {
-      Alert.alert('Credential deletion Failed!', error.message);
+      const message = error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      error.message;
+      Alert.alert('Credential deletion Failed!', message);
       setIsLoading(false);
     }
   };

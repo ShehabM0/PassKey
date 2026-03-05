@@ -51,7 +51,7 @@ const authUser = async(user: User) => {
   }
 }
 
-const insertRefreshToken = async(uid: number, rToken?: string) => {
+const insertRefreshToken = async(uid: string, rToken?: string) => {
   if(!rToken)
     rToken = manageRefreshToken.sign(uid)
   const hashedRefreshToken = hashToken(rToken)
@@ -66,7 +66,7 @@ const insertRefreshToken = async(uid: number, rToken?: string) => {
   return rToken
 }
 
-const deleteRefreshToken = async(uid:number, token: string) => {
+const deleteRefreshToken = async(uid:string, token: string) => {
   const hashedRefreshToken = hashToken(token)
 
   const [userRefreshToken] = await db
@@ -80,7 +80,7 @@ const deleteRefreshToken = async(uid:number, token: string) => {
   await db.delete(tokens).where(eq(tokens.id, userRefreshToken.id))
 }
 
-const rotateRefreshToken = async(uid: number, token: string) => {
+const rotateRefreshToken = async(uid: string, token: string) => {
   await deleteRefreshToken(uid, token)
 
   const newAccessToken = manageAccessToken.sign(uid);

@@ -40,7 +40,10 @@ export default function LoginScreen() {
       await signin({ email, password });
       router.replace('/(app)/homepage');
     } catch (error: any) {
-      Alert.alert('Login Failed', error.message);
+      const message = error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      error.message;
+      Alert.alert('Login Failed', message);
     } finally {
       setIsLoading(false);
     }

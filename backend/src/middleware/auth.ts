@@ -5,7 +5,7 @@ import { logger } from '../config/logger.ts'
 declare global {
   namespace Express {
     interface Request {
-      userId?: number
+      userId?: string
     }
   }
 }
@@ -42,7 +42,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 const authorizeUser = (req: Request, res: Response, next: NextFunction) => {
   try {
     const uid = req.userId
-    const reqUid = Number(req.params.id)
+    const reqUid = req.params.id
 
     if (reqUid && uid !== reqUid)
       return res.status(403).json({ message: 'Forbidden. You can only access your own resources!' })

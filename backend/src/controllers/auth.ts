@@ -58,7 +58,7 @@ const signIn = async(req: Request, res: Response) => {
       e instanceof Error && 
       (e.message === "User not found!" || e.message === "Invalid password!")
     )
-      return res.status(401).json({ message: "Invalid credentials!" })
+      return res.status(400).json({ message: "Invalid credentials!" })
     else {
       logger.error("Sign-in error!", e)
       return res.status(500).json({ message: "Internal server error!" })

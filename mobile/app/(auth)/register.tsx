@@ -45,7 +45,10 @@ export default function RegisterScreen() {
         })
       , 1500);
     } catch(error: any) {
-      Alert.alert('Register Failed', error.message);
+      const message = error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      error.message;
+      Alert.alert('Register Failed', message);
       setIsLoading(false);
     }
   };

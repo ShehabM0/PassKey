@@ -44,7 +44,10 @@ export default function PasswordResetScreen() {
         })
       , 1500);
     } catch (error: any) {
-      Alert.alert('Password Reset Failed!', error.message);
+      const message = error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      error.message;
+      Alert.alert('Password Reset Failed!', message);
     } finally {
       setIsLoading(false);
     }

@@ -10,9 +10,10 @@ import { logger } from '../config/logger.ts'
 import { redis } from '../config/redis.ts'
 
 const currentUser = async(req: Request, res: Response) => {
-  const id = req.userId;
+  const uid = req.userId;
+  if(!uid)
+    return res.status(401).json({ message: "User Unauthorized." })
   try {
-    const uid = Number(id)
     const user = await getUserById(uid)
     return res.status(200).json({ user: user })
   } catch (e) {
@@ -23,9 +24,10 @@ const currentUser = async(req: Request, res: Response) => {
 
 
 const sendVerification = async(req: Request, res: Response) => {
-  const id = req.userId;
+  const uid = req.userId;
+  if(!uid)
+    return res.status(401).json({ message: "User Unauthorized." })
   try {
-    const uid = Number(id)
     const user = await getUserById(uid)
     if(user.email_confirm)
       return res.status(200).json({ message: "User email is already verified." })
@@ -51,9 +53,10 @@ const sendVerification = async(req: Request, res: Response) => {
 
 const verifyEmail = async(req: Request, res: Response) => {
   const { token } = req.params
-  const id = req.userId;
+  const uid = req.userId;
+  if(!uid)
+    return res.status(401).json({ message: "User Unauthorized." })
   try {
-    const uid = Number(id)
     const user = await getUserById(uid)
     
     const aToken = manageAccessToken.verify(String(token))
@@ -133,9 +136,8 @@ const passwordReset = async(req: Request, res: Response) => {
     if(!uid)
       return res.status(400).json({ message: "Invalid or expired token!" })
 
-    const uidNum = Number(uid)
     const newPassword = await hashStr(password)
-    await updateUserPass(uidNum, newPassword)
+    await updateUserPass(uid, newPassword)
     await redis.del('password-reset:${token}')
 
     return res.status(200).json({ message: 'Your password has been reset.' })
@@ -181,7 +183,7 @@ const updatePassword = async(req: Request, res: Response) => {
 
   const confirmPass = await compareHash(oldPassword, userPass)
   if(!confirmPass)
-    return res.status(401).json({ message: "Current password is incorrect, please try again!" })
+    return res.status(400).json({ message: "Current password is incorrect, please try again!" })
 
   const token = manageAccessToken.sign(uid)
   const newHashedPass = await hashStr(newPassword)
@@ -234,7 +236,7 @@ const verifyPassword = async(req: Request, res: Response) => {
 
   return confirmPass ?
     res.status(200).json({ message: "Verified user." }) :
-    res.status(401).json({ message: "Password is incorrect!" })
+    res.status(400).json({ message: "Password is incorrect!" })
 }
 
 export {

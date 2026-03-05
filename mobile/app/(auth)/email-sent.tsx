@@ -27,7 +27,10 @@ export default function EmailSentScreen() {
       try {
         await authApi.requestPasswordReset(String(email));
       } catch (error: any) {
-        Alert.alert('Password Reset Failed!', error.message);
+        const message = error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        error.message;
+        Alert.alert('Password Reset Failed!', message);
       } finally {
         setIsLoading(false)
       }
@@ -37,7 +40,10 @@ export default function EmailSentScreen() {
       try {
         await userApi.requestPasswordUpdate({oldPassword, newPassword});
       } catch (error: any) {
-        Alert.alert('Password Update Failed!', error.message);
+        const message = error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        error.message;
+        Alert.alert('Password Update Failed!', message);
       } finally {
         setIsLoading(false)
       }
@@ -45,7 +51,10 @@ export default function EmailSentScreen() {
       try {
         await authApi.requestPasswordReset(String(email));
       } catch (error: any) {
-        Alert.alert('Email Verification Failed!', error.message);
+        const message = error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        error.message;
+        Alert.alert('Email Verification Failed!', message);
       } finally {
         setIsLoading(false)
       }

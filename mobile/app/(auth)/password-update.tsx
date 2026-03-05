@@ -62,7 +62,9 @@ export default function PasswordUpdateScreen() {
         }
       });
     } catch(error: any) {
-      const message = error?.response?.data?.error || 'Something went wrong';
+      const message = error?.response?.data?.message || 
+      error?.response?.data?.error ||
+      error.message;
       Alert.alert('Password Request Update Failed!', message);
       setIsLoading(false);
     }
@@ -80,7 +82,9 @@ export default function PasswordUpdateScreen() {
         })
       , 1500);
     } catch(error: any) {
-      const message = error?.response?.data?.message || error.message;
+      const message = error?.response?.data?.message || 
+      error?.response?.data?.error ||
+      error.message;
       Alert.alert(`${token}`, message);
       setIsLoading(false);
     }
