@@ -82,7 +82,6 @@ const verifyEmail = async(req: Request, res: Response) => {
 const requestPasswordReset = async(req: Request, res: Response) => {
   const validation = emailSchema.safeParse(req.body)
   if(!validation.success) {
-    console.log("EROR")
     return res.status(400).json({
       message: "Email validation failed!",
       error: errorFormat(validation.error.issues)

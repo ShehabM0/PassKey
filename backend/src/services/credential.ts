@@ -129,7 +129,6 @@ const getUserCredentials = async(uid: string, pagination?: PaginationParams, que
   const page = (pagination?.page && pagination.page > 0) ? pagination.page : 1
   const limit = (pagination?.limit && pagination.limit > 0) ? pagination.limit : 10
   const offset = (page - 1) * limit
-  console.log(uid)
 
   try {
     const baseWhere = eq(credentials.uid, uid)

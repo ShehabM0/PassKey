@@ -77,7 +77,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await authApi.signup(credentials);
     } catch (error: any) {
-      const message = error.response?.data?.error || 'Login failed';
+      const message = error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      'Register failed';
       throw new Error(message);
     }
   };
@@ -92,7 +94,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setUser(response.user);
     } catch (error: any) {
-      const message = error.response?.data?.error || 'Login failed';
+      const message = error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      'Login failed';
       throw new Error(message);
     }
   };
@@ -100,8 +104,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signout = async () => {
     try {
       await authApi.signout();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Logout API call failed:', error);
+      const message = error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      'Logout failed';
+      throw new Error(message);
     } finally {
       await AsyncStorage.removeItem('accessToken');
       await AsyncStorage.removeItem('refreshToken');

@@ -31,7 +31,6 @@ const getUserByEmail = async(email: string) => {
     return user
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Error fetching user by email!'
-    console.log(message)
     throw new Error(message)
   }
 }
