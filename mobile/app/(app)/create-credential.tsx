@@ -2,10 +2,10 @@ import { GET_USER_CREDENTIALS } from '@/api/graphql/queries';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { CREATE_CREDENTIAL } from '@/api/graphql/mutations';
 import PlatfromPicker from '@/components/PlatformPicker';
-import CreatePageHeader from '@/components/PageHeader';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useMutation } from '@apollo/client/react';
+import PageHeader from '@/components/PageHeader';
 import Svg, { Path } from 'react-native-svg';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -94,7 +94,7 @@ export default function CreateCredential() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <CreatePageHeader/>
+      <PageHeader color={Colors.gray100}/>
 
       { platfromPicker &&
         <PlatfromPicker onClose={closePlatformPicker} onSelect={platformSelect}/> }
@@ -178,7 +178,7 @@ export default function CreateCredential() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white
+    backgroundColor: Colors.gray100
   },
   content: {
     paddingHorizontal: 24

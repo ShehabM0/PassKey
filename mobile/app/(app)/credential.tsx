@@ -7,11 +7,11 @@ import { GetRelatedCredentialsData } from '@/types/graphql';
 import { router, useLocalSearchParams } from 'expo-router';
 import SuccessMessage from '@/components/SuccessMessage';
 import CredentialCard from '@/components/CredentialCard';
-import CreatePageHeader from '@/components/PageHeader';
 import PasswordPIN from '@/components/PopUpPassword';
 import PopupMessage from '@/components/PopUpMessage';
 import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import PageHeader from '@/components/PageHeader';
 import Feather from '@expo/vector-icons/Feather';
 import Svg, { Path } from 'react-native-svg';
 import { useEffect, useState } from 'react';
@@ -232,7 +232,7 @@ export default function CredentialPage() {
 
   return (
     <View style={styles.container} >
-      <CreatePageHeader color={Colors.white} />
+      <PageHeader color={Colors.gray100}/>
 
       { success &&
         <SuccessMessage
@@ -402,7 +402,7 @@ export default function CredentialPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white
+    backgroundColor: Colors.gray100
   },
 
   content: {
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   },
 
   metaCard: {
-    backgroundColor: Colors.gray100,
+    backgroundColor: '#f1f1f1',
     borderRadius: 12,
     padding: 14,
     marginTop: 20,

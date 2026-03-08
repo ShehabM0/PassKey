@@ -100,7 +100,7 @@ export default function PasswordUpdateScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <PageHeader/>
+      <PageHeader color={Colors.gray100}/>
 
       <View style={styles.content}>
         <Text style={styles.title}>Update your password</Text>

@@ -5,6 +5,8 @@ import { Colors } from '@/components/common/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useQuery } from '@apollo/client/react';
 import { userApi } from '@/api/rest/user';
+import { useRef, useEffect } from 'react';
+import { Animated } from 'react-native';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -18,7 +20,16 @@ import {
 } from 'react-native';
 
 export default function PasswordPIN({ credentialId, onClose, setVerification, setPassword }: any) {
+  const translateY = useRef(new Animated.Value(300)).current;
   const [pin, setPin] = useState('');
+
+  useEffect(() => {
+    Animated.timing(translateY, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   const { data, loading } = useQuery<GetCredentialPasswordData>
     (
@@ -61,10 +72,9 @@ export default function PasswordPIN({ credentialId, onClose, setVerification, se
   };
 
   return (
-    <Modal visible={true} transparent animationType="slide">
+    <Modal visible={true} transparent animationType="none">
       <TouchableOpacity activeOpacity={1} onPress={()=> onClose()} style={styles.overlay}>
-        <TouchableOpacity activeOpacity={1} style={styles.sheet}>
-
+        <Animated.View style={[ styles.sheet, { transform: [{ translateY }] } ]} >
           <Text style={styles.title}>Account verification</Text>
           <Text style={styles.subtitle}>Enter account password</Text>
 
@@ -100,8 +110,7 @@ export default function PasswordPIN({ credentialId, onClose, setVerification, se
               <Text style={styles.buttonText}>Submit</Text>
             )}
           </TouchableOpacity>
-
-        </TouchableOpacity>
+        </Animated.View>
       </TouchableOpacity>
     </Modal>
   );
@@ -166,7 +175,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-
 });
-
-
