@@ -123,7 +123,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   bodyContainer: {
     flex: 1,
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.background,
   },
 
   listHeader: {

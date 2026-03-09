@@ -232,7 +232,7 @@ export default function CredentialPage() {
 
   return (
     <View style={styles.container} >
-      <PageHeader color={Colors.gray100}/>
+      <PageHeader color={Colors.background}/>
 
       { success &&
         <SuccessMessage
@@ -402,7 +402,7 @@ export default function CredentialPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.gray100
+    backgroundColor: Colors.background
   },
 
   content: {
@@ -427,9 +427,17 @@ const styles = StyleSheet.create({
   },
 
   iconContainer: {
-    marginRight: 15,
+    width: 50,
+    height: 50,
+    borderRadius: 16,
+    backgroundColor: Colors.white,
+    marginRight: 16,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   form: {
@@ -446,7 +454,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 50,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: Colors.white,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 20,
@@ -497,7 +505,7 @@ const styles = StyleSheet.create({
   },
 
   metaCard: {
-    backgroundColor: '#f1f1f1',
+    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: 14,
     marginTop: 20,

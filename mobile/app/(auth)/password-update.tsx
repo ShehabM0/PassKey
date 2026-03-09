@@ -90,9 +90,12 @@ export default function PasswordUpdateScreen() {
     }
   };
 
-  const toggleShowPassword = () => {
-    setShowOldPassword(!showOldPassword);
+  const toggleShowNewPassword = () => {
     setshowNewPassword(!showNewPassword);
+  };
+
+  const toggleShowOldPassword = () => {
+    setShowOldPassword(!showOldPassword);
   };
 
   return (
@@ -120,7 +123,7 @@ export default function PasswordUpdateScreen() {
                 name={showOldPassword? "eye" : "eye-off"}
                 size={24}
                 color="grey"
-                onPress={toggleShowPassword}
+                onPress={toggleShowOldPassword}
             />}
           </View>
 
@@ -134,12 +137,12 @@ export default function PasswordUpdateScreen() {
               secureTextEntry={!showNewPassword}
               editable={!isLoading}
             />
-            {oldPassword && 
+            {newPassword && 
             <Ionicons
                 name={showNewPassword? "eye" : "eye-off"}
                 size={24}
                 color="grey"
-                onPress={toggleShowPassword}
+                onPress={toggleShowNewPassword}
             />}
           </View>
 
@@ -193,7 +196,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 50,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: Colors.white,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 20,

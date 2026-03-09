@@ -9,10 +9,11 @@ type Credential = {
   platformColor: string;
   email: string;
   updated_at?: string;
+  created_at?: string;
   onPress: () => void
 };
 
-export default function CredentialCard({ platformTitle, platformIcon, platformColor, email, updated_at, onPress }: Credential) {
+export default function CredentialCard({ platformTitle, platformIcon, platformColor, email, updated_at, created_at, onPress }: Credential) {
 
   const getRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -51,7 +52,12 @@ export default function CredentialCard({ platformTitle, platformIcon, platformCo
           updated_at && (
             <View style={styles.metaRow}>
               <Text style={styles.updatedText}>
-                Updated {getRelativeTime(updated_at)}
+                { updated_at == created_at ? (
+                  <Text> Created </Text>
+                ) : (
+                  <Text> Updated </Text>
+                )}
+                 {getRelativeTime(updated_at)}
               </Text>
             </View>
           )

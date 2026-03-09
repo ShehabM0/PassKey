@@ -141,7 +141,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.gray100
+    backgroundColor: Colors.background
   },
   header: {
     flex: 1,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 50,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: Colors.white,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 20,

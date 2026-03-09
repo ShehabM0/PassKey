@@ -61,7 +61,7 @@ export default function HomeHeader({ query, onChangeQuery }: HomeHeaderProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.background,
     paddingTop: 60,
     paddingHorizontal: 20,
   },

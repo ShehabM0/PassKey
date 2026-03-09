@@ -71,7 +71,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <CreatePageHeader color={Colors.gray100} />
+      <CreatePageHeader color={Colors.background} />
 
       { success &&
         <SuccessMessage
@@ -119,7 +119,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.background,
   },
 
   content: {
