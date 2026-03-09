@@ -10,7 +10,7 @@ const getHtmlTemp = (emailData: EmailDAO) => {
   const source = fs.readFileSync(filePath, 'utf-8').toString()
   const template = handlebars.compile(source)
   const replacements = {
-    uid: emailData.variables?.uid,
+    url: emailData.variables?.url,
     token: emailData.variables?.token,
   }
   const htmlTemp = template(replacements)

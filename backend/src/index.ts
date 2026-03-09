@@ -17,8 +17,9 @@ import cookieParser from 'cookie-parser'
 import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
+import redirectRoutes from './routes/redirect.ts'
 
-const port = process.env.PORT;
+const port = Number(process.env.PORT) || 3000;
 const app = express();
 
 app.use(cookieParser())
@@ -55,9 +56,10 @@ app.get('/', (req, res) => {
 });
 
 app.use('/graphql', expressMiddleware(apolloServer, { context: createContext }))
+app.use('/api/redirect', redirectRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/auth', authRoutes)
 
-app.listen(port, () => {
-  return console.log(`Express is listening at http://localhost:${port}`)
+app.listen(port, '0.0.0.0', () => {
+  return logger.info(`Express is listening at http://0.0.0.0:${port}`)
 })

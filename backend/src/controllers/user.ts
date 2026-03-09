@@ -9,6 +9,8 @@ import { type EmailDAO } from '../config/smtp.ts'
 import { logger } from '../config/logger.ts'
 import { redis } from '../config/redis.ts'
 
+const URL = process.env.URL;
+
 const currentUser = async(req: Request, res: Response) => {
   const uid = req.userId;
   if(!uid)
@@ -39,6 +41,7 @@ const sendVerification = async(req: Request, res: Response) => {
       subject: "Email verification",
       htmlTempPath: "/src/templates/verify-email.html",
       variables: {
+        url: `${URL}/api/redirect/verify-email`,
         token: token
       }
     }
@@ -100,6 +103,7 @@ const requestPasswordReset = async(req: Request, res: Response) => {
       subject: "Password reset",
       htmlTempPath: "/src/templates/reset-password.html",
       variables: {
+        url: `${URL}/api/redirect/reset-password`,
         token: token
       }
     }
@@ -193,7 +197,7 @@ const updatePassword = async(req: Request, res: Response) => {
     subject: "Password update",
     htmlTempPath: "/src/templates/update-password.html",
     variables: {
-      uid: uid,
+      url: `${URL}/api/redirect/update-password`,
       token: token
     }
   }
@@ -215,9 +219,10 @@ const verifyUpdatePassword = async(req: Request, res: Response) => {
 
   const newHashedPass = await redis.get('password-update:${uid}:${token}')
   if(!newHashedPass)
-    return res.status(400).json({ message: "Couldn't find redis password!" })
+    return res.status(400).json({ message: "Invalid or expired token!" })
 
   await updateUserPass(uid, newHashedPass)
+  await redis.del('password-update:${uid}:${token}')
   
   return res.status(200).json({ message: "Your password has been updated successfully." })
 }
