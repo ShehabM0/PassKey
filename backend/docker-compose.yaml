@@ -1,8 +1,0 @@
-services:
-  app:
-    build: .
-    container_name: passkey
-    ports:
-      - '${PORT:-3000}:3000'
-    env_file:
-      - .env

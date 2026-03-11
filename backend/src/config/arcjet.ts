@@ -9,9 +9,8 @@ const aj = arcjet({
     shield({ mode: "LIVE" }),
     // Create a bot detection rule
     detectBot({
-      mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-      allow: dev ? ["POSTMAN", "CATEGORY:PROGRAMMATIC"] : [], // PROGRAMMATIC = libs like Axios/fetch
-
+      mode: "LIVE",
+      allow: dev ? ["CATEGORY:PROGRAMMATIC", "POSTMAN"] : ["CATEGORY:PROGRAMMATIC"],
     }),
     tokenBucket({
       // Tracked by IP address by default, but this can be customized

@@ -28,6 +28,12 @@ A modern, secure, and lightweight password management application built with Typ
 - **Validation**: Zod
 - **Logging**: Winston
 
+## Deployment
+
+- **Database**: [Neon](https://neon.tech) - Serverless PostgreSQL
+- **Cache/Sessions**: [Railway](https://railway.app) - Redis
+- **Backend Hosting**: [Fly.io](https://fly.io) - Docker-based deployment
+
 ## Prerequisites
 
 - Node.js (v18 or higher)
@@ -68,6 +74,8 @@ ARCJET_KEY=your_arcjet_key
 # JWT Secrets
 ACCESS_TOKEN=your_access_token_secret
 REFRESH_TOKEN=your_refresh_token_secret
+ACCESS_TOKEN_EXPIRES=your_est_date
+REFRESH_TOKEN_EXPIRES=your_est_date
 
 # Encryption Secret
 ENC_SECRET=your_encryption_secret
@@ -93,12 +101,7 @@ The server will start on `http://localhost:3000` (or the port specified in your 
 
 ## Docker Deployment
 
-1. Build and run with Docker Compose:
-```bash
-docker-compose up -d
-```
-
-Or build the Docker image manually:
+1. Build and run with Docker image manually:
 ```bash
 docker build -t passkey .
 docker run -p 3000:3000 --env-file .env passkey
@@ -156,4 +159,4 @@ The GraphQL API provides the following operations:
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details
+MIT License

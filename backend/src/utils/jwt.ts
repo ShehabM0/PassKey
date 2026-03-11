@@ -1,12 +1,17 @@
 import { logger } from '../config/logger.ts'
+import type { StringValue } from "ms";
 import jwt from 'jsonwebtoken'
 
 const manageAccessToken = {
-  sign: (userId: number) => {
+  sign: (userId: string) => {
     if(!userId)
       throw new Error('Authentication failed!')
     try {
-      return jwt.sign({ uid: userId }, process.env.ACCESS_TOKEN!, { expiresIn: "2h" })
+      return jwt.sign(
+        { uid: userId },
+        process.env.ACCESS_TOKEN!,
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRES! as StringValue }
+      )
     } catch (e) {
       logger.error('Authentication failed!', e)
       throw new Error('Authentication failed!')
@@ -23,10 +28,14 @@ const manageAccessToken = {
 }
 
 const manageRefreshToken = {
-  sign: (userId: number) => {
+  sign: (userId: string) => {
     if(!userId) throw new Error('Authentication failed!');
     try{
-      return jwt.sign({ uid: userId }, process.env.REFRESH_TOKEN!, { expiresIn: "2d" })
+      return jwt.sign(
+        { uid: userId },
+        process.env.REFRESH_TOKEN!,
+        { expiresIn: process.env.REFRESH_TOKEN_EXPIRES! as StringValue }
+      )
     } catch(e) {
       logger.error('Authentication failed!', e)
       throw new Error('Authentication failed!')

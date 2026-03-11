@@ -11,8 +11,10 @@ import {
   from,
 } from '@apollo/client';
 
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
 const httpLink = createHttpLink({
-  uri: 'http://10.0.2.2:3000/graphql',
+  uri: `${API_BASE_URL}/graphql`
 });
 
 const authLink = setContext(async (_, { headers }) => {

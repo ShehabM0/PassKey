@@ -13,11 +13,11 @@ import { logger } from './config/logger.ts'
 import usersRoutes from './routes/user.ts'
 import authRoutes from './routes/auth.ts'
 
+import redirectRoutes from './routes/redirect.ts'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
-import redirectRoutes from './routes/redirect.ts'
 
 const port = Number(process.env.PORT) || 3000;
 const app = express();

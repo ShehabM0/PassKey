@@ -103,19 +103,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signout = async () => {
     try {
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('userData');
+      setUser(null);
       await authApi.signout();
+      await AsyncStorage.removeItem('refreshToken');
     } catch (error: any) {
       console.error('Logout API call failed:', error);
       const message = error?.response?.data?.error ||
       error?.response?.data?.message ||
       'Logout failed';
       throw new Error(message);
-    } finally {
-      await AsyncStorage.removeItem('accessToken');
-      await AsyncStorage.removeItem('refreshToken');
-      await AsyncStorage.removeItem('userData');
-      setUser(null);
-    }
+    } 
   };
 
   const refresh = async () => {

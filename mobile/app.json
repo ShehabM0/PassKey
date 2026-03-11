@@ -30,7 +30,8 @@
       "icon": "./assets/images/icon.png",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
-        "foregroundImage": "./assets/images/key.png"
+        "foregroundImage": "./assets/images/key.png",
+        "monochromeImage": "./assets/images/key.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -46,7 +47,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/key.png",
-          "imageWidth": 200,
+          "imageWidth": 100,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {

@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: `${API_BASE_URL}/api`,
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -78,7 +78,9 @@ apiClient.interceptors.response.use(
       await AsyncStorage.removeItem('accessToken');
       await AsyncStorage.removeItem('refreshToken');
       await AsyncStorage.removeItem('userData');
-      router.replace('/(auth)/login')
+      router.replace('/(auth)/login');
+
+      return Promise.reject(error);
     }
   }
 );
